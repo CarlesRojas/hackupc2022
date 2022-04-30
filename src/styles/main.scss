@@ -114,6 +114,23 @@
     }
 }
 
+.Logobar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $logobarheight;
+    max-height: $logobarheight;
+    width: 100vw;
+    max-width: 100vw;
+
+    .logo {
+        height: $logobarheight * 0.6;
+        max-height: $logobarheight * 0.6;
+        min-height: $logobarheight * 0.6;
+    }
+}
+
 .List {
     background-color: rgb(255, 236, 236);
     width: 100%;
@@ -121,9 +138,30 @@
 }
 
 .Home {
-    background-color: rgb(228, 255, 227);
+    position: relative;
     width: 100%;
     height: 100%;
+
+    .cardContainer {
+        width: 100%;
+        height: 100%;
+    }
+
+    .buttonsContainer {
+        width: 100%;
+        height: 100%;
+        .no {
+        }
+
+        .yes {
+        }
+
+        .icon {
+        }
+
+        .name {
+        }
+    }
 }
 
 .Filter {

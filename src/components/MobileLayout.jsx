@@ -5,6 +5,7 @@ import List from "./List.jsx";
 import Home from "./Home";
 import Filter from "./Filter";
 import Navbar from "./Navbar";
+import Logobar from "./Logobar";
 
 const STAGES = ["list", "home", "filter"];
 
@@ -29,6 +30,8 @@ export default function MobileLayout() {
 
     return (
         <div className="MobileLayout">
+            <Logobar />
+
             <div className="mainPagesContent">{renderedPages}</div>
 
             <Navbar setPage={setPage} currentPage={currentPage} />
