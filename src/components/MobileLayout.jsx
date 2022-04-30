@@ -9,7 +9,7 @@ import Navbar from "./Navbar";
 const STAGES = ["list", "home", "filter"];
 
 export default function MobileLayout() {
-    const currentPage = useRef(0);
+    const currentPage = useRef(1);
 
     const animationSpeed = 300;
     const content = STAGES.map((id) => {
