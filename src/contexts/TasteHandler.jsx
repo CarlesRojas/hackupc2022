@@ -25,7 +25,7 @@ const TasteHandlerProvider = (props) => {
             "a2": INITIAL_VALUATION,
             "a": INITIAL_VALUATION
         },
-        cubic_centimerers: {
+        cc: {
             "0-50": INITIAL_VALUATION,
             "50-125": INITIAL_VALUATION,
             "125-250": INITIAL_VALUATION,
@@ -105,9 +105,9 @@ const TasteHandlerProvider = (props) => {
             "2005-2010": INITIAL_VALUATION,
             "2010-2015": INITIAL_VALUATION,
             "2015-2020": INITIAL_VALUATION,
-            "2020-now": INITIAL_VALUATION
+            "2020-2022": INITIAL_VALUATION
         },
-        mileage: {
+        km: {
             "0-10000": INITIAL_VALUATION,
             "10000-20000": INITIAL_VALUATION,
             "20000-30000": INITIAL_VALUATION,
@@ -138,7 +138,7 @@ const TasteHandlerProvider = (props) => {
             "a2": 0.25,
             "a": 0.25
         },
-        cubic_centimerers: {
+        cc: {
             "0-50": 1/7.0,
             "50-125": 1/7.0,
             "125-250": 1/7.0,
@@ -218,9 +218,9 @@ const TasteHandlerProvider = (props) => {
             "2005-2010": 1/9.0,
             "2010-2015": 1/9.0,
             "2015-2020": 1/9.0,
-            "2020-now": 1/9.0
+            "2020-2022": 1/9.0
         },
-        mileage: {
+        km: {
             "0-10000": 1/7.0,
             "10000-20000": 1/7.0,
             "20000-30000": 1/7.0,
@@ -281,52 +281,68 @@ const TasteHandlerProvider = (props) => {
     const newValuation = (
         price,
         license,
-        cubic_centimerers,
+        cc,
         type,
         brand,
         year,
-        mileage,
+        km,
         valuation,
     ) => {
         const auxTastes = {...tastesValuation.current};
         auxTastes["price"][price] = newTasteValuation(auxTastes["price"][price], valuation, auxTastes["totalViewed"]);
         auxTastes["license"][license] = newTasteValuation(auxTastes["license"][license], valuation, auxTastes["totalViewed"]);
-        auxTastes["cubic_centimerers"][cubic_centimerers] = newTasteValuation(auxTastes["cubic_centimerers"][cubic_centimerers], valuation, auxTastes["totalViewed"]);
+        auxTastes["cc"][cc] = newTasteValuation(auxTastes["cc"][cc], valuation, auxTastes["totalViewed"]);
         auxTastes["type"][type] = newTasteValuation(auxTastes["type"][type], valuation, auxTastes["totalViewed"]);
         auxTastes["brand"][brand] = newTasteValuation(auxTastes["brand"][brand], valuation, auxTastes["totalViewed"]);
         auxTastes["year"][year] = newTasteValuation(auxTastes["year"][year], valuation, auxTastes["totalViewed"]);
-        auxTastes["mileage"][mileage] = newTasteValuation(auxTastes["mileage"][mileage], valuation, auxTastes["totalViewed"]);
+        auxTastes["km"][km] = newTasteValuation(auxTastes["km"][km], valuation, auxTastes["totalViewed"]);
         auxTastes["totalViewed"] += 1;
         tastesValuation.current = auxTastes;
         calcNewPcts();
     }
 
+    const findInterval = (value, dict) => {
+        for (var key in dict) {
+            const interval = key.split("-");
+            if (parseInt(interval[0]) < value && value <= parseInt(interval[1])) return key;
+        }
+        return "err"
+    } 
+
     const likeBike = (
         price,
         license,
-        cubic_centimerers,
+        cc,
         type,
         brand,
         year,
-        mileage,
+        km,
         timeToLike,
     ) => {
+        const priceInterval = findInterval(price, tastesPct["price"]);
+        const ccInterval = findInterval(cc, tastesPct["cc"]);
+        const yearInterval = findInterval(year, tastesPct["year"]);
+        const kmInterval = findInterval(km, tastesPct["km"]);
         const valuation = WORST_TIME - timeToLike;
-        newValuation(price, license, cubic_centimerers, type, brand, year, mileage, timeToLike, valuation);
+        newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
     }
 
     const dislikeBike = (
         price,
         license,
-        cubic_centimerers,
+        cc,
         type,
         brand,
         year,
-        mileage,
+        km,
         timeToLike,
     ) => {
         const valuation = timeToLike - WORST_TIME;
-        newValuation(price, license, cubic_centimerers, type, brand, year, mileage, timeToLike, valuation);
+        const priceInterval = findInterval(price, tastesPct["price"]);
+        const ccInterval = findInterval(cc, tastesPct["cc"]);
+        const yearInterval = findInterval(year, tastesPct["year"]);
+        const kmInterval = findInterval(km, tastesPct["km"]);
+        newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
     }
 
     const addFilter = (category, toFilter) => {

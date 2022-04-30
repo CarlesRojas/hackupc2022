@@ -67,15 +67,15 @@ const RandomizeTastes = () => {
 
   const onClick = () => {
     const rand = (Math.random() - 0.5) * 20000;
-    const price = getRandom(tastesPct["price"]);
+    const price = Math.random() * 23000;
     const license = getRandom(tastesPct["license"]);
-    const cubic_centimerers = getRandom(tastesPct["cubic_centimerers"]);
+    const cc = Math.random() * 2000;
     const type = getRandom(tastesPct["type"]);
     const brand = getRandom(tastesPct["brand"]);
-    const year = getRandom(tastesPct["year"]);
-    const mileage = getRandom(tastesPct["mileage"]);
-    if (rand > 0) likeBike(price, license, cubic_centimerers, type, brand, year, mileage, rand);
-    else dislikeBike(price, license, cubic_centimerers, type, brand, year, mileage, -rand);
+    const year = 1980 + (Math.random() * 42);
+    const km = Math.random() * 70000;
+    if (rand > 0) likeBike(price, license, cc, type, brand, year, km, rand);
+    else dislikeBike(price, license, cc, type, brand, year, km, -rand);
   }
 
   return (
