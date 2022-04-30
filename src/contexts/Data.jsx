@@ -1,9 +1,14 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const Data = createContext();
 const DataProvider = (props) => {
-    const [myList, setMyList] = useState([]);
+    const [myList, setMyList] = useState(localStorage.getItem("mundimoto_myList"), []);
     const [listData, setListData] = useState([]);
+
+    useEffect(() => {
+        localStorage.setItem("mundimoto_myList", myList);
+        console.log(myList);
+    }, [myList])
 
     const addToMyList = (id, data) => {
         setMyList([...myList], id);

@@ -1,11 +1,11 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useRef, useState, useEffect } from "react";
 
 const WORST_TIME = 10000;
 const INITIAL_VALUATION = 100000;
 
 export const TasteHandler = createContext();
 const TasteHandlerProvider = (props) => {
-    const tastesValuation = useRef({
+    const tastesValuation = useRef(localStorage.getItem("mundimoto_tastesValuation") || {
         price: {
             "0-1000": INITIAL_VALUATION,
             "1000-1500": INITIAL_VALUATION,
@@ -228,6 +228,10 @@ const TasteHandlerProvider = (props) => {
             "60000-70000": 1 / 7.0,
         },
     });
+
+    useEffect(() => {
+        localStorage.setItem("mundimoto_tastesValuation", tastesValuation.current)
+    }, [tastesPct])
 
     const filters = useRef({});
     const filtersEnabled = useRef([]);
