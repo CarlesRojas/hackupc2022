@@ -230,6 +230,7 @@ const TasteHandlerProvider = (props) => {
     });
 
     const filters = useRef({});
+    const filtersEnabled = useRef([]);
 
     const calcNewPcts = () => {
         const newPcts = {};
@@ -308,7 +309,10 @@ const TasteHandlerProvider = (props) => {
 
     const addFilter = (category, toFilter) => {
         const actualFilters = { ...filters.current };
-        if (actualFilters[category] == null) actualFilters[category] = [];
+        if (actualFilters[category] == null) {
+            actualFilters[category] = [];
+            filtersEnabled.current.push(category);
+        }
         actualFilters[category].push(toFilter);
         filters.current = actualFilters;
         calcNewPcts();
@@ -320,7 +324,12 @@ const TasteHandlerProvider = (props) => {
         actualFilters[category] = actualFilters[category].filter((filter) => {
             return filter !== toRemove;
         });
-        if (actualFilters[category].length === 0) delete actualFilters[category];
+        if (actualFilters[category].length === 0) {
+            delete actualFilters[category];
+            filtersEnabled.current = filtersEnabled.current.filter((element) => {
+                return element !== category;
+            })
+        }
         filters.current = actualFilters;
         calcNewPcts();
     };
@@ -329,6 +338,7 @@ const TasteHandlerProvider = (props) => {
         <TasteHandler.Provider
             value={{
                 tastesPct,
+                filtersEnabled,
                 likeBike,
                 dislikeBike,
                 addFilter,
