@@ -1,18 +1,19 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
+
+import { API } from "./API";
 
 export const Data = createContext();
 const DataProvider = (props) => {
-    const [myList, setMyList] = useState(localStorage.getItem("mundimoto_myList"), []);
+    const { getMotosListData } = useContext(API);
+
+    const [myList, setMyList] = useState([]);
     const [listData, setListData] = useState([]);
 
-    useEffect(() => {
-        localStorage.setItem("mundimoto_myList", myList);
-        console.log(myList);
-    }, [myList])
-
     const addToMyList = (id, data) => {
-        setMyList([...myList], id);
-        setListData([...listData], { ...data });
+        localStorage.setItem("mundimoto_myList", JSON.stringify([...myList, id]));
+
+        setMyList([...myList, id]);
+        setListData([...listData, { ...data }]);
     };
 
     const removeIdFromList = (id) => {
@@ -20,6 +21,7 @@ const DataProvider = (props) => {
 
         const newMyList = [...myList];
         newMyList.splice(index, 1);
+        localStorage.setItem("mundimoto_myList", JSON.stringify([...newMyList]));
         setMyList(newMyList);
 
         const newListData = [...listData];
@@ -29,15 +31,14 @@ const DataProvider = (props) => {
 
     useEffect(() => {
         const getSavedData = async () => {
-            // TODO GET THIS FROM LOCAL STORAGE
-            const mySavedList = ["0000000074", "0000000075", "0000000076"];
+            // const mySavedList = ["0000000074", "0000000075", "0000000076"];
+            const mySavedList = JSON.parse(localStorage.getItem("mundimoto_myList")) || [];
             setMyList(mySavedList);
 
             const mySavedData = await getMotosListData(mySavedList);
             setListData(mySavedData);
         };
 
-        console.log("ONLY ONCE");
         getSavedData();
     }, [getMotosListData]);
 
