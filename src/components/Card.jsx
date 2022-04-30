@@ -2,11 +2,20 @@ import React, { useCallback, useEffect, useRef } from "react";
 import SVG from "react-inlinesvg";
 import { useSpring, animated } from "react-spring";
 import { useDrag } from "@use-gesture/react";
+import cn from "classnames";
 
 import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
-export default function Card({ data, shown, onLike, onPass, id }) {
-    const { /*id,*/ name, old_price, price, licence, cc, type, brand, year, km, image /*, url*/ } = data;
+const API_URL =
+    !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+        ? "http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000"
+        : "/api";
+
+const IMG_URL = `${API_URL}/fileManager/image`;
+
+export default function Card({ data, shown, onLike, onPass, cardId }) {
+    const { id, name, old_price, price, licence, cc, type, brand, year, km /*, url*/ } = data;
+    console.log(cardId);
 
     const [{ x, scale, opacity }, api] = useSpring(() => ({
         x: 0,
@@ -124,7 +133,7 @@ export default function Card({ data, shown, onLike, onPass, id }) {
             {...horizontalGestureBind()}
         >
             <div className="pictureContainer">
-                <img src={image} alt="" className="picture" />
+                <img src={`${IMG_URL}/${id}/`} alt="" className="picture" />
             </div>
 
             <div className="info">
@@ -141,7 +150,7 @@ export default function Card({ data, shown, onLike, onPass, id }) {
                 </div>
 
                 <div className="row3">
-                    <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>
+                    {old_price && <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>}
                     <p className="price">{`${price.toLocaleString("es-ES")} €`}</p>
                 </div>
 

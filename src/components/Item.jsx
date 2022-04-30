@@ -7,7 +7,12 @@ import useThrottle from "../hooks/useThrottle";
 
 import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
-const IMG_URL = "/api/fileManager/image";
+const API_URL =
+    !process.env.NODE_ENV || process.env.NODE_ENV === "development"
+        ? "http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000"
+        : "/api";
+
+const IMG_URL = `${API_URL}/fileManager/image`;
 
 export default function Item({ data, selected, selectThis, removeThisFromList, closeSelected }) {
     const { id, name, old_price, price, licence, cc, type, brand, year, km, url } = data;
@@ -27,8 +32,9 @@ export default function Item({ data, selected, selectThis, removeThisFromList, c
                         <img src={BRAND_LOGOS[brand]} alt="" className="brandLogo" />
                         <p className="name">{name}</p>
                     </div>
+
                     <div className="prices">
-                        <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>
+                        {old_price && <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>}
                         <p className="price">{`${price.toLocaleString("es-ES")} €`}</p>
                     </div>
                 </div>

@@ -1,10 +1,12 @@
 import { createContext, useEffect, useState, useContext } from "react";
 
 import { API } from "./API";
+import { TasteHandler } from "./TasteHandler";
 
 export const Data = createContext();
 const DataProvider = (props) => {
-    const { getMotosListData } = useContext(API);
+    const { getMotosListData, getNextMoto } = useContext(API);
+    const { tastesPct } = useContext(TasteHandler);
 
     const [myList, setMyList] = useState([]);
     const [listData, setListData] = useState([]);
@@ -29,8 +31,24 @@ const DataProvider = (props) => {
         setListData(newListData);
     };
 
+    const [firstMoto, setFirstMoto] = useState(null);
+    const [secondMoto, setSecondMoto] = useState(null);
+
+    const loadNextMoto = async (replaceFirst) => {
+        const newMoto = await getNextMoto(tastesPct, myList);
+        if (replaceFirst) setFirstMoto(newMoto);
+        else setSecondMoto(newMoto);
+    };
+
     useEffect(() => {
-        const getSavedData = async () => {
+        const getData = async () => {
+            // Load next 2 motos
+            const newMotoOne = await getNextMoto(tastesPct, myList);
+            const newMotoTwo = await getNextMoto(tastesPct, myList);
+            setFirstMoto(newMotoOne);
+            setSecondMoto(newMotoTwo);
+
+            // Load saved List
             // const mySavedList = ["0000000074", "0000000075", "0000000076"];
             const mySavedList = JSON.parse(localStorage.getItem("mundimoto_myList")) || [];
             setMyList(mySavedList);
@@ -39,7 +57,7 @@ const DataProvider = (props) => {
             setListData(mySavedData);
         };
 
-        getSavedData();
+        getData();
     }, [getMotosListData]);
 
     return (
@@ -51,6 +69,11 @@ const DataProvider = (props) => {
                 listData,
                 setListData,
                 removeIdFromList,
+                firstMoto,
+                setFirstMoto,
+                secondMoto,
+                setSecondMoto,
+                loadNextMoto,
             }}
         >
             {props.children}

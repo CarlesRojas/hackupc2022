@@ -6,10 +6,12 @@ import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
 import { TasteHandler } from "../contexts/TasteHandler";
+import { Data } from "../contexts/Data";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
+    const { firstMoto, secondMoto, loadNextMoto, addToMyList } = useContext(Data);
     const { likeBike, dislikeBike } = useContext(TasteHandler);
 
     const startTime = useRef(performance.now());
@@ -28,47 +30,17 @@ export default function Home() {
         throwLeft: false,
     });
 
-    const [firstMoto, setFirstMoto] = useState({
-        id: "0001",
-        name: "Yamaha RTX Turbo Pro",
-        old_price: 10000,
-        price: 7500,
-        licence: "a",
-        cc: 5000,
-        type: "scooter",
-        brand: "yamaha",
-        year: 2021,
-        km: 16000,
-        image: "https://cdn.wallapop.com/images/10420/bq/00/__/c10420p708798496/i2540823870.jpg?pictureSize=W640",
-        url: "https://mundimoto.com/es/motos-segunda-mano-ocasion/naked/yamaha/mt-01-promo-1nbD8Jpw62QTzAbPFLHe",
-    });
-
-    const [secondMoto, setSecondMoto] = useState({
-        id: "0002",
-        name: "Honda RTX Turbo Pro",
-        old_price: 10000,
-        price: 7500,
-        licence: "a",
-        cc: 5000,
-        type: "tresRuedas",
-        brand: "honda",
-        year: 2021,
-        km: 16000,
-        image: "https://cdn.wallapop.com/images/10420/bq/00/__/c10420p708798496/i2540823870.jpg?pictureSize=W640",
-        url: "https://mundimoto.com/es/motos-segunda-mano-ocasion/naked/yamaha/mt-01-promo-1nbD8Jpw62QTzAbPFLHe",
-    });
-
     const blockButtons = useRef(false);
 
     const swap = async () => {
         if (firstState.shown) {
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
-            await sleep(500);
+            await loadNextMoto(true);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
         } else {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
-            await sleep(500);
+            await loadNextMoto(false);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
         }
@@ -80,14 +52,14 @@ export default function Home() {
         if (firstState.shown) {
             setFirstState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
-            await sleep(500);
+            await loadNextMoto(true);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             blockButtons.current = false;
         } else {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
-            await sleep(500);
+            await loadNextMoto(false);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             blockButtons.current = false;
@@ -98,25 +70,27 @@ export default function Home() {
         const endTime = performance.now();
         const elapsed = Math.min(endTime - startTime.current, 10000);
         startTime.current = endTime;
-        console.log(elapsed)
 
-        const price = Math.random() * 23000;
-        const licence = motoData["licence"];
-        const cc = Math.random() * 2000;
-        const type = motoData["type"];
-        const brand = motoData["brand"];
-        const year = 1980 + Math.random() * 42;
-        const km = Math.random() * 70000;
-        if (like) likeBike(price, licence, cc, type, brand, year, km, elapsed);
-        else dislikeBike(price, licence, cc, type, brand, year, km, elapsed);
+        const price = motoData.price;
+        const licence = motoData.licence;
+        const cc = motoData.cc;
+        const type = motoData.type;
+        const brand = motoData.brand;
+        const year = motoData.year;
+        const km = motoData.km;
+
+        if (like) {
+            likeBike(price, licence, cc, type, brand, year, km, elapsed);
+
+            addToMyList(motoData.id, motoData);
+        } else dislikeBike(price, licence, cc, type, brand, year, km, elapsed);
     };
 
     const handleLike = (isButton) => {
         if (isButton && blockButtons.current) return;
 
-        console.log("LIKE");
-        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto }; 
-        onValuate(motoData)
+        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
+        onValuate(motoData);
 
         if (isButton) swapThrow(true);
         else swap();
@@ -125,9 +99,8 @@ export default function Home() {
     const handlePass = (isButton) => {
         if (isButton && blockButtons.current) return;
 
-        console.log("PASS");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        onValuate(motoData, false)
+        onValuate(motoData, false);
 
         if (isButton) swapThrow(false);
         else swap();
@@ -136,20 +109,25 @@ export default function Home() {
     return (
         <div className="Home">
             <div className="cardContainer">
-                <Card
-                    data={firstMoto}
-                    shown={firstState}
-                    onLike={() => handleLike(false)}
-                    onPass={() => handlePass(false)}
-                    id={"first"}
-                />
-                <Card
-                    data={secondMoto}
-                    shown={secondState}
-                    onLike={() => handleLike(false)}
-                    onPass={() => handlePass(false)}
-                    id={"second"}
-                />
+                {firstMoto && (
+                    <Card
+                        data={firstMoto}
+                        shown={firstState}
+                        onLike={() => handleLike(false)}
+                        onPass={() => handlePass(false)}
+                        cardId={"first"}
+                    />
+                )}
+
+                {secondMoto && (
+                    <Card
+                        data={secondMoto}
+                        shown={secondState}
+                        onLike={() => handleLike(false)}
+                        onPass={() => handlePass(false)}
+                        cardId={"second"}
+                    />
+                )}
             </div>
 
             <div className="buttonsContainer">
