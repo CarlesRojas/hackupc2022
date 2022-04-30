@@ -6,10 +6,12 @@ import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
 import { TasteHandler } from "../contexts/TasteHandler";
+import { Data } from "../contexts/Data";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
+    const { firstMoto, secondMoto, loadNextMoto, addToMyList } = useContext(Data);
     const { likeBike, dislikeBike } = useContext(TasteHandler);
 
     const [firstState, setFirstState] = useState({
@@ -24,36 +26,6 @@ export default function Home() {
         blocked: true,
         throwRight: false,
         throwLeft: false,
-    });
-
-    const [firstMoto, setFirstMoto] = useState({
-        id: "0001",
-        name: "Yamaha RTX Turbo Pro",
-        old_price: 10000,
-        price: 7500,
-        licence: "a",
-        cc: 5000,
-        type: "scooter",
-        brand: "yamaha",
-        year: 2021,
-        km: 16000,
-        image: "https://cdn.wallapop.com/images/10420/bq/00/__/c10420p708798496/i2540823870.jpg?pictureSize=W640",
-        url: "https://mundimoto.com/es/motos-segunda-mano-ocasion/naked/yamaha/mt-01-promo-1nbD8Jpw62QTzAbPFLHe",
-    });
-
-    const [secondMoto, setSecondMoto] = useState({
-        id: "0002",
-        name: "Honda RTX Turbo Pro",
-        old_price: 10000,
-        price: 7500,
-        licence: "a",
-        cc: 5000,
-        type: "tresRuedas",
-        brand: "honda",
-        year: 2021,
-        km: 16000,
-        image: "https://cdn.wallapop.com/images/10420/bq/00/__/c10420p708798496/i2540823870.jpg?pictureSize=W640",
-        url: "https://mundimoto.com/es/motos-segunda-mano-ocasion/naked/yamaha/mt-01-promo-1nbD8Jpw62QTzAbPFLHe",
     });
 
     const blockButtons = useRef(false);
@@ -101,16 +73,20 @@ export default function Home() {
         const brand = motoData["brand"];
         const year = 1980 + Math.random() * 42;
         const km = Math.random() * 70000;
-        if (like) likeBike(price, licence, cc, type, brand, year, km, rand);
-        else dislikeBike(price, licence, cc, type, brand, year, km, rand);
+
+        if (like) {
+            likeBike(price, licence, cc, type, brand, year, km, rand);
+
+            addToMyList(motoData.id, motoData);
+        } else dislikeBike(price, licence, cc, type, brand, year, km, rand);
     };
 
     const handleLike = (isButton) => {
         if (isButton && blockButtons.current) return;
 
-        console.log("LIKE");
-        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto }; 
-        onValuate(motoData)
+        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
+        onValuate(motoData);
+        loadNextMoto(firstState.shown);
 
         if (isButton) swapThrow(true);
         else swap();
@@ -119,9 +95,9 @@ export default function Home() {
     const handlePass = (isButton) => {
         if (isButton && blockButtons.current) return;
 
-        console.log("PASS");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        onValuate(motoData, false)
+        onValuate(motoData, false);
+        loadNextMoto(firstState.shown);
 
         if (isButton) swapThrow(false);
         else swap();

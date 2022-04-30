@@ -27,6 +27,7 @@ export default function Item({ data, selected, selectThis, removeThisFromList, c
                         <img src={BRAND_LOGOS[brand]} alt="" className="brandLogo" />
                         <p className="name">{name}</p>
                     </div>
+
                     <div className="prices">
                         <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>
                         <p className="price">{`${price.toLocaleString("es-ES")} €`}</p>
