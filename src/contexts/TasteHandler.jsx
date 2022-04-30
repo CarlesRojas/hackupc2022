@@ -5,7 +5,8 @@ const INITIAL_VALUATION = 100000;
 
 export const TasteHandler = createContext();
 const TasteHandlerProvider = (props) => {
-    const tastesValuation = useRef(localStorage.getItem("mundimoto_tastesValuation") || {
+    console.log(localStorage.getItem("mundimoto_tastesValuation"))
+    const tastesValuation = useRef(JSON.parse(localStorage.getItem("mundimoto_tastesValuation")) || {
         price: {
             "0-1000": INITIAL_VALUATION,
             "1000-1500": INITIAL_VALUATION,
@@ -229,10 +230,6 @@ const TasteHandlerProvider = (props) => {
         },
     });
 
-    useEffect(() => {
-        localStorage.setItem("mundimoto_tastesValuation", tastesValuation.current)
-    }, [tastesPct])
-
     const filters = useRef({});
     const filtersEnabled = useRef([]);
 
@@ -270,7 +267,6 @@ const TasteHandlerProvider = (props) => {
     };
 
     const newValuation = (price, licence, cc, type, brand, year, km, valuation) => {
-        console.log(`licence ${licence}`)
         const auxTastes = { ...tastesValuation.current };
         auxTastes["price"][price] += valuation;
         auxTastes["licence"][licence] += valuation;
@@ -280,6 +276,7 @@ const TasteHandlerProvider = (props) => {
         auxTastes["year"][year] += valuation;
         auxTastes["km"][km] += valuation;
         tastesValuation.current = auxTastes;
+        localStorage.setItem("mundimoto_tastesValuation", JSON.stringify(auxTastes));
         calcNewPcts();
     };
 
