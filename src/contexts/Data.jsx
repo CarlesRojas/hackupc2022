@@ -7,12 +7,15 @@ const DataProvider = (props) => {
 
     const [myList, setMyList] = useState([]);
     const [listData, setListData] = useState([]);
+
+    const viewedMotos = useRef([]);
+
     const totalValuated = useRef(JSON.parse(localStorage.getItem("mundimoto_totalValuated")) || 0);
     const limits = useRef({
-        year: { min: -1, max: -1, median: -1 },
-        cc: { min: -1, max: -1, median: -1 },
-        km: { min: -1, max: -1, median: -1 },
-        price: { min: -1, max: -1, median: -1 },
+        year: { min: -1, max: -1, avg: -1 },
+        cc: { min: -1, max: -1, avg: -1 },
+        km: { min: -1, max: -1, avg: -1 },
+        price: { min: -1, max: -1, avg: -1 },
     });
     const [medians, setMedians] = useState(JSON.parse(localStorage.getItem("mundimoto_medians")) || null);
 
@@ -146,7 +149,8 @@ const DataProvider = (props) => {
     const [secondMoto, setSecondMoto] = useState(null);
 
     const loadNextMoto = async (replaceFirst) => {
-        const newMoto = await getNextMoto(medians, myList, filtersStatus, totalValuated.current);
+        const newMoto = await getNextMoto(medians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
+        viewedMotos.current.push(newMoto.id)
         if (replaceFirst) setFirstMoto(newMoto);
         else setSecondMoto(newMoto);
 
@@ -166,18 +170,20 @@ const DataProvider = (props) => {
             let newMedians = null;
             if (!medians) {
                 newMedians = {
-                    year: limits.current.year.median,
-                    cc: limits.current.cc.median,
-                    km: limits.current.km.median,
-                    price: limits.current.price.median,
+                    year: limits.current.year.avg,
+                    cc: limits.current.cc.avg,
+                    km: limits.current.km.avg,
+                    price: limits.current.price.avg,
                 };
 
                 setMedians(newMedians);
             } else newMedians = { ...medians };
 
             // Load next 2 motos
-            const newMotoOne = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current);
-            const newMotoTwo = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current);
+            const newMotoOne = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
+            viewedMotos.current.push(newMotoOne.id)
+            const newMotoTwo = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
+            viewedMotos.current.push(newMotoTwo.id)
             setFirstMoto(newMotoOne);
             setSecondMoto(newMotoTwo);
 
