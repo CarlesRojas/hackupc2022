@@ -6,8 +6,8 @@ import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
 import { TYPES_TRANSLATION, BRANDS_TRANSLATION, LICENCES_TRANSLATION } from "./translates";
 
-const FilterElement = ({ category, filter, value, onSelect, onDiselect, filterEnabled }) => {
-    const [enabled, setEnabled] = useState(false);
+const FilterElement = ({ category, filter, value, onSelect, onDiselect, filterEnabled, filters }) => {
+    const [enabled, setEnabled] = useState(filters.current[category]?.includes(filter) ? true : false);
 
     const image =
         category === "brand" ? (
