@@ -80,7 +80,7 @@ const BRAND_LOGOS = {
     gilera: gileraBrand,
     goes: goesBrand,
     hanway: hanwayBrand,
-    harleydavidson: harleydavidsonBrand,
+    harleyDavidson: harleydavidsonBrand,
     honda: hondaBrand,
     husaberg: husabergBrand,
     husqvarna: husqvarnaBrand,
@@ -127,8 +127,4 @@ const TYPES = {
     tresRuedas: tresRuedasType,
 };
 
-export {
-    BRAND_LOGOS,
-    LICENCES,
-    TYPES
-}
+export { BRAND_LOGOS, LICENCES, TYPES };
