@@ -134,8 +134,10 @@ const TYPES = {
     tresRuedas: tresRuedasType,
 };
 
+const IMG_URL = "http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000/fileManager/image";
+
 export default function Item({ data, selected, selectThis, removeThisFromList, closeSelected }) {
-    const { id, name, oldPrice, price, licence, cc, type, brand, year, km, image, url } = data;
+    const { id, name, old_price, price, licence, cc, type, brand, year, km, url } = data;
 
     const onCrossClick = useThrottle(() => {
         removeThisFromList();
@@ -145,7 +147,7 @@ export default function Item({ data, selected, selectThis, removeThisFromList, c
     return (
         <div className={cn("Item", { selected })}>
             <div className="header">
-                <img src={image} alt="" className="image" onClick={selectThis} />
+                <img src={`${IMG_URL}/${id}/`} alt="" className="image" onClick={selectThis} />
 
                 <div className="primaryInfo" onClick={selectThis}>
                     <div className="nameContainer">
@@ -153,7 +155,7 @@ export default function Item({ data, selected, selectThis, removeThisFromList, c
                         <p className="name">{name}</p>
                     </div>
                     <div className="prices">
-                        <p className="oldPrice">{`${oldPrice.toLocaleString("es-ES")} €`}</p>
+                        <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>
                         <p className="price">{`${price.toLocaleString("es-ES")} €`}</p>
                     </div>
                 </div>
