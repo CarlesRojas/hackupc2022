@@ -1,14 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import SVG from "react-inlinesvg";
-import useThrottle from "../hooks/useThrottle";
 
 import YesIcon from "../resources/icons/check.svg";
 import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
+import { TasteHandler } from '../contexts/TasteHandler'
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
+
+    const {
+        likeBike,
+        dislikeBike,
+    } = useContext(TasteHandler)
+
     const [firstState, setFirstState] = useState({
         shown: true,
         blocked: false,
@@ -89,12 +96,26 @@ export default function Home() {
         }
     };
 
+    const onValuate = (motoData, like = true) => {
+        const rand = Math.random() * 10000;
+        const price = Math.random() * 23000;
+        const licence = motoData["licence"];
+        const cc = Math.random() * 2000;
+        const type = motoData["type"];
+        const brand = motoData["brand"];
+        const year = 1980 + Math.random() * 42;
+        const km = Math.random() * 70000;
+        if (like) likeBike(price, licence, cc, type, brand, year, km, rand)
+        else dislikeBike(price, licence, cc, type, brand, year, km, rand)
+    }
+
     const handleLike = (isButton) => {
         if (isButton && blockButtons.current) return;
 
         console.log("LIKE");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
         console.log(motoData);
+        onValuate(motoData)
 
         if (isButton) swapThrow(true);
         else swap();
@@ -106,6 +127,7 @@ export default function Home() {
         console.log("PASS");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
         console.log(motoData);
+        onValuate(motoData, false)
 
         if (isButton) swapThrow(false);
         else swap();
