@@ -1,4 +1,4 @@
-import { createContext, useRef } from "react";
+import { createContext, useRef, useState } from "react";
 
 const WORST_TIME = 10000;
 const INITIAL_VALUATION = 100000;
@@ -8,7 +8,7 @@ const TasteHandlerProvider = (props) => {
 
     const tastesValuation = useRef({
         price: {
-            "0-1000": INITIAL_VALUATION,
+            "0-1000": 0,
             "1000-1500": INITIAL_VALUATION,
             "1500-2500": INITIAL_VALUATION,
             "2500-3000": INITIAL_VALUATION,
@@ -121,7 +121,7 @@ const TasteHandlerProvider = (props) => {
 
     const [tastesPct, setTastesPct] = useState({
         price: {
-            "0-1000": 0.1,
+            "0-1000": 0.01,
             "1000-1500": 0.1,
             "1500-2500": 0.1,
             "2500-3000": 0.1,
@@ -243,21 +243,35 @@ const TasteHandlerProvider = (props) => {
 
     const calcNewPcts = () => {
         const newPcts = {};
-        for (category in tastesValuation.current) {
-            if (category != "totalViewed") {
+        const actualValuation = tastesValuation.current
+        for (var category in actualValuation) {
+            if (category !== "totalViewed") {
                 var totalValuation = 0;
                 var numberOfZeroPct = 0;
                 newPcts[category] = {}
-                for (key in tastesValuation.current[category]) {
-                    if (tastesValuation.current[category][key] == 0 || (filters.current[category] != null && !filters.current[category].includes(key))) {
-                        numberOfZeroPct += 1;
+                for (var key in actualValuation[category]) {
+                    if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
+                        if (actualValuation[category][key] === 0) {
+                            numberOfZeroPct += 1;
+                        } 
+                        else totalValuation += actualValuation[category][key];
                     }
-                    else totalValuation += tastesValuation.current[category][key];
                 }
                 totalValuation += (totalValuation/100) * numberOfZeroPct;
-                for (key in tastesValuation.current[category] || (filters.current[category] != null && !filters.current[category].includes(key))) {
-                    if (tastesValuation.current[category][key] == 0) newPcts[category][key] = 0.01;
-                    else newPcts[category][key] = tastesValuation.current[category][key] / totalValuation;
+                for (key in actualValuation[category]) {
+                    if (filters.current[category] != null) {
+                        if (!filters.current[category].includes(key)) newPcts[category][key] = 0.0;
+                        else {
+                            if (actualValuation[category][key] === 0) {
+                                if (filters.current[category].length == 1) newPcts[category][key] = 1.0;
+                                else newPcts[category][key] = 0.0;
+                            }
+                            else newPcts[category][key] = actualValuation[category][key] / totalValuation;
+                        }
+                    } else {
+                        if (actualValuation[category][key] === 0) newPcts[category][key] = 0.01;
+                        else newPcts[category][key] = actualValuation[category][key] / totalValuation;
+                    }
                 }
             }
         }
@@ -272,20 +286,18 @@ const TasteHandlerProvider = (props) => {
         brand,
         year,
         mileage,
-        timeToLike,
         valuation,
     ) => {
-        const auxTastes = {...tastes.current};
-        const valuation = WORST_TIME - timeToLike;
-        auxTastes[price] = newTasteValuation(auxTastes[price], valuation, auxTastes["totalViewed"]);
-        auxTastes[license] = newTasteValuation(auxTastes[license], valuation, auxTastes["totalViewed"]);
-        auxTastes[cubic_centimerers] = newTasteValuation(auxTastes[cubic_centimerers], valuation, auxTastes["totalViewed"]);
-        auxTastes[type] = newTasteValuation(auxTastes[type], valuation, auxTastes["totalViewed"]);
-        auxTastes[brand] = newTasteValuation(auxTastes[brand], valuation, auxTastes["totalViewed"]);
-        auxTastes[year] = newTasteValuation(auxTastes[year], valuation, auxTastes["totalViewed"]);
-        auxTastes[mileage] = newTasteValuation(auxTastes[mileagee], valuation, auxTastes["totalViewed"]);
+        const auxTastes = {...tastesValuation.current};
+        auxTastes["price"][price] = newTasteValuation(auxTastes["price"][price], valuation, auxTastes["totalViewed"]);
+        auxTastes["license"][license] = newTasteValuation(auxTastes["license"][license], valuation, auxTastes["totalViewed"]);
+        auxTastes["cubic_centimerers"][cubic_centimerers] = newTasteValuation(auxTastes["cubic_centimerers"][cubic_centimerers], valuation, auxTastes["totalViewed"]);
+        auxTastes["type"][type] = newTasteValuation(auxTastes["type"][type], valuation, auxTastes["totalViewed"]);
+        auxTastes["brand"][brand] = newTasteValuation(auxTastes["brand"][brand], valuation, auxTastes["totalViewed"]);
+        auxTastes["year"][year] = newTasteValuation(auxTastes["year"][year], valuation, auxTastes["totalViewed"]);
+        auxTastes["mileage"][mileage] = newTasteValuation(auxTastes["mileage"][mileage], valuation, auxTastes["totalViewed"]);
         auxTastes["totalViewed"] += 1;
-        tastes.current = auxTastes;
+        tastesValuation.current = auxTastes;
         calcNewPcts();
     }
 
@@ -318,9 +330,21 @@ const TasteHandlerProvider = (props) => {
     }
 
     const addFilter = (category, toFilter) => {
-        const actualFilters = filters.current;
+        const actualFilters = {...filters.current};
         if (actualFilters[category] == null) actualFilters[category] = [];
         actualFilters[category].push(toFilter);
+        filters.current = actualFilters;
+        calcNewPcts();
+    }
+
+    const removeFilter = (category, toRemove) => {
+        const actualFilters = {...filters.current};
+        if (actualFilters[category] == null) return;
+        actualFilters[category] = actualFilters[category].filter((filter) => {
+            return filter != toRemove;
+        });
+        if (actualFilters[category].length === 0) delete actualFilters[category];
+        filters.current = actualFilters;
         calcNewPcts();
     }
 
@@ -330,7 +354,8 @@ const TasteHandlerProvider = (props) => {
                 tastesPct,
                 likeBike,
                 dislikeBike,
-                addFilter
+                addFilter,
+                removeFilter
             }}
         >
             {props.children}
