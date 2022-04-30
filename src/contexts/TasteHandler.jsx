@@ -2,7 +2,7 @@ import { toKeyAlias } from "@babel/types";
 import { createContext, useRef, useState } from "react";
 
 const WORST_TIME = 10000;
-const INITIAL_VALUATION = 100000;
+const INITIAL_VALUATION = 10000;
 
 export const TasteHandler = createContext();
 const TasteHandlerProvider = (props) => {
@@ -232,15 +232,29 @@ const TasteHandlerProvider = (props) => {
         },
     });
 
+    const higherPriority = useRef([]);
+
+    const insert = (array, pair, left, right) => {
+        if (right <= left) {
+            array.splice(left, 0, pair);
+            return
+        }
+        const middle = left + Math.floor((right - left) / 2);
+        if (pair[1] > array[middle][1]) insert(array, pair, left, middle);
+        else insert(array, pair, middle+1, right)
+    }
+
     const filters = useRef({});
     const filtersEnabled = useRef([]);
 
     const calcNewPcts = () => {
         const newPcts = {};
         const actualValuation = tastesValuation.current;
+        const higherValues = [];
         for (var category in actualValuation) {
             var totalValuation = 0;
             var numberOfZeroPct = 0;
+            var higher = 0;
             newPcts[category] = {};
             for (var key in actualValuation[category]) {
                 if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
@@ -248,7 +262,9 @@ const TasteHandlerProvider = (props) => {
                         numberOfZeroPct += 1;
                     } else totalValuation += actualValuation[category][key];
                 }
+                if (actualValuation[category][key] > higher) higher = actualValuation[category][key];
             }
+            insert(higherValues, [category, higher], 0, higherValues.length);
             totalValuation += (totalValuation / 100) * numberOfZeroPct;
             for (key in actualValuation[category]) {
                 if (filters.current[category] != null) {
@@ -265,19 +281,22 @@ const TasteHandlerProvider = (props) => {
                 }
             }
         }
+        higherPriority.current = []
+        higherValues.forEach((pair) => {
+            higherPriority.current.push(pair[0]);
+        });
         setTastesPct(newPcts);
     };
 
     const newValuation = (price, licence, cc, type, brand, year, km, valuation) => {
         const auxTastes = { ...tastesValuation.current };
-        auxTastes["price"][price] += valuation;
-        auxTastes["licence"][licence] += valuation;
-        auxTastes["cc"][cc] += valuation;
-        console.log(type, valuation);
-        auxTastes["type"][type] += valuation;
-        auxTastes["brand"][brand] += valuation;
-        auxTastes["year"][year] += valuation;
-        auxTastes["km"][km] += valuation;
+        auxTastes["price"][price] = Math.max(auxTastes["price"][price] + valuation, 0);
+        auxTastes["licence"][licence] = Math.max(auxTastes["licence"][licence] + valuation, 0);
+        auxTastes["cc"][cc] = Math.max(auxTastes["cc"][cc] + valuation, 0);
+        auxTastes["type"][type] = Math.max(auxTastes["type"][type] + valuation, 0);
+        auxTastes["brand"][brand] = Math.max(auxTastes["brand"][brand] + valuation, 0);
+        auxTastes["year"][year] = Math.max(auxTastes["year"][year] + valuation, 0);
+        auxTastes["km"][km] = Math.max(auxTastes["km"][km] + valuation, 0);
         tastesValuation.current = auxTastes;
         localStorage.setItem("mundimoto_tastesValuation", JSON.stringify(auxTastes));
         calcNewPcts();

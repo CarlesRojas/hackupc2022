@@ -52,7 +52,7 @@ const APIProvider = (props) => {
     const getNextThreeMotos = async (tastesPct, mySavedList) => {
         const postData = { ...tastesPct, exclude: mySavedList };
         try {
-            const rawResponse = await fetch(`${API_URL}/motorbikes/next/`, {
+            const rawResponse = await fetch(`${API_URL}/motorbikes/nextOld/`, {
                 method: "post",
                 headers: {
                     Accept: "application/json, text/plain, */*",
