@@ -13,7 +13,7 @@ Install the [Netlify CLI](https://docs.netlify.com/cli/get-started/):
 `npm install netlify-cli -g`
 
 Login to Netlify with:
-`netlify login`
+` netlifylogin`
 
 **Every time**
 Run this (If prompted to choose a site, choose `estado-covid`):

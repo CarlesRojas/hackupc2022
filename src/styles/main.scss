@@ -6,8 +6,106 @@
 @import "./notTouchscreen";
 @import "./animations";
 
-.App {
+.MobileLayout {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    .mainPagesContent {
+        position: relative;
+        height: calc(100% - #{$navBarheight});
+        width: 100%;
+    }
+}
+
+.DesktopLayout {
     position: relative;
     height: 100%;
     width: 100%;
+}
+
+.Navbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $navBarheight;
+    max-height: $navBarheight;
+    width: 100vw;
+    max-width: 100vw;
+    padding: 0.5rem;
+
+    .content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 10px 5px rgba(0, 0, 0, 0.3);
+        padding: 0.5rem;
+
+        .container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            width: 33%;
+
+            &.selected {
+                .icon {
+                    color: $motoColor;
+                }
+
+                .name {
+                    color: $motoColor;
+                }
+            }
+
+            .icon {
+                transition: color 0.2s ease-in-out;
+                height: $navBarheight * 0.3;
+                max-height: $navBarheight * 0.3;
+                min-height: $navBarheight * 0.3;
+                width: $navBarheight * 0.3;
+                max-width: $navBarheight * 0.3;
+                min-width: $navBarheight * 0.3;
+                color: rgb(200, 200, 200);
+            }
+
+            .name {
+                margin-top: 0.2rem;
+                font-size: 0.8rem;
+                font-weight: 500;
+                text-align: center;
+                color: rgb(200, 200, 200);
+            }
+        }
+    }
+}
+
+.List {
+    background-color: rgb(255, 236, 236);
+    width: 100vw;
+    height: 100%;
+}
+
+.Home {
+    background-color: rgb(228, 255, 227);
+    width: 100vw;
+    height: 100%;
+}
+
+.Filter {
+    background-color: rgb(231, 246, 255);
+    width: 100vw;
+    height: 100%;
 }
