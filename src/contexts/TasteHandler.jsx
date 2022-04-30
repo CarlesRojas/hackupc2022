@@ -5,7 +5,6 @@ const INITIAL_VALUATION = 100000;
 
 export const TasteHandler = createContext();
 const TasteHandlerProvider = (props) => {
-
     const tastesValuation = useRef({
         price: {
             "0-1000": INITIAL_VALUATION,
@@ -17,7 +16,7 @@ const TasteHandlerProvider = (props) => {
             "7500-10000": INITIAL_VALUATION,
             "10000-15000": INITIAL_VALUATION,
             "15000-20000": INITIAL_VALUATION,
-            "20000-23000": INITIAL_VALUATION
+            "20000-23000": INITIAL_VALUATION,
         },
         license: {
             "am": INITIAL_VALUATION,
@@ -32,7 +31,7 @@ const TasteHandlerProvider = (props) => {
             "250-500": INITIAL_VALUATION,
             "500-700": INITIAL_VALUATION,
             "1000-1500": INITIAL_VALUATION,
-            "1500-2000": INITIAL_VALUATION
+            "1500-2000": INITIAL_VALUATION,
         },
         type: {
             "scooter": INITIAL_VALUATION,
@@ -105,7 +104,7 @@ const TasteHandlerProvider = (props) => {
             "2005-2010": INITIAL_VALUATION,
             "2010-2015": INITIAL_VALUATION,
             "2015-2020": INITIAL_VALUATION,
-            "2020-2022": INITIAL_VALUATION
+            "2020-2022": INITIAL_VALUATION,
         },
         km: {
             "0-10000": INITIAL_VALUATION,
@@ -114,10 +113,10 @@ const TasteHandlerProvider = (props) => {
             "30000-40000": INITIAL_VALUATION,
             "40000-50000": INITIAL_VALUATION,
             "50000-60000": INITIAL_VALUATION,
-            "60000-70000": INITIAL_VALUATION
+            "60000-70000": INITIAL_VALUATION,
         },
-        totalViewed: 0
-    })
+        totalViewed: 0,
+    });
 
     const [tastesPct, setTastesPct] = useState({
         price: {
@@ -130,7 +129,7 @@ const TasteHandlerProvider = (props) => {
             "7500-10000": 0.1,
             "10000-15000": 0.1,
             "15000-20000": 0.1,
-            "20000-23000": 0.1
+            "20000-23000": 0.1,
         },
         license: {
             "am": 0.25,
@@ -139,13 +138,13 @@ const TasteHandlerProvider = (props) => {
             "a": 0.25
         },
         cc: {
-            "0-50": 1/7.0,
-            "50-125": 1/7.0,
-            "125-250": 1/7.0,
-            "250-500": 1/7.0,
-            "500-700": 1/7.0,
-            "1000-1500": 1/7.0,
-            "1500-2000": 1/7.0
+            "0-50": 1 / 7.0,
+            "50-125": 1 / 7.0,
+            "125-250": 1 / 7.0,
+            "250-500": 1 / 7.0,
+            "500-700": 1 / 7.0,
+            "1000-1500": 1 / 7.0,
+            "1500-2000": 1 / 7.0,
         },
         type: {
             "scooter": 0.1,
@@ -210,63 +209,57 @@ const TasteHandlerProvider = (props) => {
             "zontes": 1/48.0
         },
         year: {
-            "1980-1985": 1/9.0,
-            "1985-1990": 1/9.0,
-            "1990-1995": 1/9.0,
-            "1995-2000": 1/9.0,
-            "2000-2005": 1/9.0,
-            "2005-2010": 1/9.0,
-            "2010-2015": 1/9.0,
-            "2015-2020": 1/9.0,
-            "2020-2022": 1/9.0
+            "1980-1985": 1 / 9.0,
+            "1985-1990": 1 / 9.0,
+            "1990-1995": 1 / 9.0,
+            "1995-2000": 1 / 9.0,
+            "2000-2005": 1 / 9.0,
+            "2005-2010": 1 / 9.0,
+            "2010-2015": 1 / 9.0,
+            "2015-2020": 1 / 9.0,
+            "2020-2022": 1 / 9.0,
         },
         km: {
-            "0-10000": 1/7.0,
-            "10000-20000": 1/7.0,
-            "20000-30000": 1/7.0,
-            "30000-40000": 1/7.0,
-            "40000-50000": 1/7.0,
-            "50000-60000": 1/7.0,
-            "60000-70000": 1/7.0
-        }
-    })
+            "0-10000": 1 / 7.0,
+            "10000-20000": 1 / 7.0,
+            "20000-30000": 1 / 7.0,
+            "30000-40000": 1 / 7.0,
+            "40000-50000": 1 / 7.0,
+            "50000-60000": 1 / 7.0,
+            "60000-70000": 1 / 7.0,
+        },
+    });
 
-    const filters = useRef({})
+    const filters = useRef({});
 
-    const newTasteValuation = (
-        oldValuation,
-        newValuation,
-        totalViewed,
-    ) => {
-        return Math.max(((oldValuation * totalViewed) + newValuation) / (totalViewed + 1), 0);
-    }
+    const newTasteValuation = (oldValuation, newValuation, totalViewed) => {
+        return Math.max((oldValuation * totalViewed + newValuation) / (totalViewed + 1), 0);
+    };
 
     const calcNewPcts = () => {
         const newPcts = {};
-        const actualValuation = tastesValuation.current
+        const actualValuation = tastesValuation.current;
         for (var category in actualValuation) {
             if (category !== "totalViewed") {
                 var totalValuation = 0;
                 var numberOfZeroPct = 0;
-                newPcts[category] = {}
+                newPcts[category] = {};
                 for (var key in actualValuation[category]) {
                     if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
                         if (actualValuation[category][key] === 0) {
                             numberOfZeroPct += 1;
-                        } 
-                        else totalValuation += actualValuation[category][key];
+                        } else totalValuation += actualValuation[category][key];
                     }
                 }
-                totalValuation += (totalValuation/100) * numberOfZeroPct;
+                totalValuation += (totalValuation / 100) * numberOfZeroPct;
                 for (key in actualValuation[category]) {
                     if (filters.current[category] != null) {
                         if (!filters.current[category].includes(key)) newPcts[category][key] = 0.0;
                         else {
                             if (actualValuation[category][key] === 0) {
-                                if (filters.current[category].length == 1) newPcts[category][key] = 1.0;
+                                if (filters.current[category].length === 1) newPcts[category][key] = 1.0;
                                 else newPcts[category][key] = 0.0;
-                            }
-                            else newPcts[category][key] = actualValuation[category][key] / totalValuation;
+                            } else newPcts[category][key] = actualValuation[category][key] / totalValuation;
                         }
                     } else {
                         if (actualValuation[category][key] === 0) newPcts[category][key] = 0.01;
@@ -276,21 +269,16 @@ const TasteHandlerProvider = (props) => {
             }
         }
         setTastesPct(newPcts);
-    }
+    };
 
-    const newValuation = (
-        price,
-        license,
-        cc,
-        type,
-        brand,
-        year,
-        km,
-        valuation,
-    ) => {
-        const auxTastes = {...tastesValuation.current};
+    const newValuation = (price, license, cc, type, brand, year, km, valuation) => {
+        const auxTastes = { ...tastesValuation.current };
         auxTastes["price"][price] = newTasteValuation(auxTastes["price"][price], valuation, auxTastes["totalViewed"]);
-        auxTastes["license"][license] = newTasteValuation(auxTastes["license"][license], valuation, auxTastes["totalViewed"]);
+        auxTastes["license"][license] = newTasteValuation(
+            auxTastes["license"][license],
+            valuation,
+            auxTastes["totalViewed"]
+        );
         auxTastes["cc"][cc] = newTasteValuation(auxTastes["cc"][cc], valuation, auxTastes["totalViewed"]);
         auxTastes["type"][type] = newTasteValuation(auxTastes["type"][type], valuation, auxTastes["totalViewed"]);
         auxTastes["brand"][brand] = newTasteValuation(auxTastes["brand"][brand], valuation, auxTastes["totalViewed"]);
@@ -299,7 +287,7 @@ const TasteHandlerProvider = (props) => {
         auxTastes["totalViewed"] += 1;
         tastesValuation.current = auxTastes;
         calcNewPcts();
-    }
+    };
 
     const findInterval = (value, dict) => {
         const keys = Object.keys(dict);
@@ -308,63 +296,45 @@ const TasteHandlerProvider = (props) => {
             const interval = key.split("-");
             if (parseInt(interval[0]) < value && value <= parseInt(interval[1])) return key;
         }
-        return "err"
-    } 
+        return "err";
+    };
 
-    const likeBike = (
-        price,
-        license,
-        cc,
-        type,
-        brand,
-        year,
-        km,
-        timeToLike,
-    ) => {
+    const likeBike = (price, license, cc, type, brand, year, km, timeToLike) => {
         const priceInterval = findInterval(price, tastesPct["price"]);
         const ccInterval = findInterval(cc, tastesPct["cc"]);
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
         const valuation = WORST_TIME - timeToLike;
         newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
-    }
+    };
 
-    const dislikeBike = (
-        price,
-        license,
-        cc,
-        type,
-        brand,
-        year,
-        km,
-        timeToLike,
-    ) => {
+    const dislikeBike = (price, license, cc, type, brand, year, km, timeToLike) => {
         const valuation = timeToLike - WORST_TIME;
         const priceInterval = findInterval(price, tastesPct["price"]);
         const ccInterval = findInterval(cc, tastesPct["cc"]);
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
         newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
-    }
+    };
 
     const addFilter = (category, toFilter) => {
-        const actualFilters = {...filters.current};
+        const actualFilters = { ...filters.current };
         if (actualFilters[category] == null) actualFilters[category] = [];
         actualFilters[category].push(toFilter);
         filters.current = actualFilters;
         calcNewPcts();
-    }
+    };
 
     const removeFilter = (category, toRemove) => {
-        const actualFilters = {...filters.current};
+        const actualFilters = { ...filters.current };
         if (actualFilters[category] == null) return;
         actualFilters[category] = actualFilters[category].filter((filter) => {
-            return filter != toRemove;
+            return filter !== toRemove;
         });
         if (actualFilters[category].length === 0) delete actualFilters[category];
         filters.current = actualFilters;
         calcNewPcts();
-    }
+    };
 
     return (
         <TasteHandler.Provider
@@ -373,7 +343,7 @@ const TasteHandlerProvider = (props) => {
                 likeBike,
                 dislikeBike,
                 addFilter,
-                removeFilter
+                removeFilter,
             }}
         >
             {props.children}
