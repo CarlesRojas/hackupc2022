@@ -6,7 +6,7 @@ import { useDrag } from "@use-gesture/react";
 import apriliaBrand from "../resources/icons/brands/aprilia.png";
 import benelliBrand from "../resources/icons/brands/benelli.png";
 import bmwBrand from "../resources/icons/brands/bmw.png";
-import brixonBrand from "../resources/icons/brands/brixon.png";
+import brixtonBrand from "../resources/icons/brands/brixton.png";
 import cakeBrand from "../resources/icons/brands/cake.png";
 import cfmotoBrand from "../resources/icons/brands/cfmoto.png";
 import daelimBrand from "../resources/icons/brands/daelim.png";
@@ -71,7 +71,7 @@ const BRAND_LOGOS = {
     aprilia: apriliaBrand,
     benelli: benelliBrand,
     bmw: bmwBrand,
-    brixon: brixonBrand,
+    brixton: brixtonBrand,
     cake: cakeBrand,
     cfmoto: cfmotoBrand,
     daelim: daelimBrand,
@@ -80,6 +80,7 @@ const BRAND_LOGOS = {
     fantic: fanticBrand,
     fbMondial: fbMondialBrand,
     fkMotors: fkMotorsBrand,
+    fkm: fkMotorsBrand,
     gasGas: gasGasBrand,
     gilera: gileraBrand,
     goes: goesBrand,
@@ -134,8 +135,6 @@ const TYPES = {
 export default function Card({ data, shown, onLike, onPass, id }) {
     const { /*id,*/ name, oldPrice, price, licence, cc, type, brand, year, km, image /*, url*/ } = data;
 
-    const initialHourI = useRef(0);
-
     const [{ x, scale, opacity }, api] = useSpring(() => ({
         x: 0,
         scale: 0.5,
@@ -144,25 +143,31 @@ export default function Card({ data, shown, onLike, onPass, id }) {
 
     const swipingRight = useRef(true);
 
-    const throwRight = useCallback(() => {
-        api.start({
-            x: window.innerWidth,
-            scale: 1,
-            opacity: 0,
-        });
+    const throwRight = useCallback(
+        (callParentFunction) => {
+            api.start({
+                x: window.innerWidth,
+                scale: 1,
+                opacity: 0,
+            });
 
-        onLike();
-    }, [api, onLike]);
+            if (callParentFunction) onLike();
+        },
+        [api, onLike]
+    );
 
-    const throwLeft = useCallback(() => {
-        api.start({
-            x: -window.innerWidth,
-            scale: 1,
-            opacity: 0,
-        });
+    const throwLeft = useCallback(
+        (callParentFunction) => {
+            api.start({
+                x: -window.innerWidth,
+                scale: 1,
+                opacity: 0,
+            });
 
-        onPass();
-    }, [api, onPass]);
+            if (callParentFunction) onPass();
+        },
+        [api, onPass]
+    );
 
     const center = useCallback(() => {
         api.start({
@@ -190,16 +195,16 @@ export default function Card({ data, shown, onLike, onPass, id }) {
             const throwAway = vx > 1.5 || Math.abs(mx) > window.innerWidth * 0.6;
 
             if (!down) {
-                if (throwAway && swipingRight.current) throwRight();
-                else if (throwAway) throwLeft();
+                if (throwAway && swipingRight.current) throwRight(true);
+                else if (throwAway) throwLeft(true);
                 else center();
             } else {
                 if (throwAway && swipingRight.current) {
-                    throwRight();
+                    throwRight(true);
                     cancel();
                     return;
                 } else if (throwAway) {
-                    throwLeft();
+                    throwLeft(true);
                     cancel();
                     return;
                 }
@@ -217,17 +222,18 @@ export default function Card({ data, shown, onLike, onPass, id }) {
         { filterTaps: true, axis: "x" }
     );
 
-    // console.log(id, shown);
-
     useEffect(() => {
         if (shown.shown) {
-            console.log(`Center ${id}`);
             center();
         } else {
-            console.log(`Hide ${id}`);
             hide();
         }
     }, [center, hide, shown]);
+
+    useEffect(() => {
+        if (shown.throwRight) throwRight(false);
+        else if (shown.throwLeft) throwLeft(false);
+    }, [throwRight, throwLeft, shown]);
 
     // First time only
     const firstTimeDone = useRef(false);
@@ -244,17 +250,21 @@ export default function Card({ data, shown, onLike, onPass, id }) {
             style={{ x, scale, opacity, pointerEvents: shown.blocked ? "none" : "all" }}
             {...horizontalGestureBind()}
         >
-            <img src={image} alt="" className="picture" />
+            <div className="pictureContainer">
+                <img src={image} alt="" className="picture" />
+            </div>
 
             <div className="info">
-                <div className="row1">
-                    <img src={BRAND_LOGOS[brand]} alt="" className="brandLogo" />
-                    <p className="name">{name}</p>
-                </div>
+                <div className="groupRows">
+                    <div className="row1">
+                        <img src={BRAND_LOGOS[brand]} alt="" className="brandLogo" />
+                        <p className="name">{name}</p>
+                    </div>
 
-                <div className="row2">
-                    <p className="cc">{`${cc.toLocaleString("es-ES")} c.c.`}</p>
-                    <p className="km">{`${km.toLocaleString("es-ES")} km`}</p>
+                    <div className="row2">
+                        <p className="cc">{`${cc.toLocaleString("es-ES")} c.c.`}</p>
+                        <p className="km">{`${km.toLocaleString("es-ES")} km`}</p>
+                    </div>
                 </div>
 
                 <div className="row3">

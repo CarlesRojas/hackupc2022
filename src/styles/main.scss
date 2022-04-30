@@ -243,14 +243,32 @@
     border-radius: 0.75rem;
     touch-action: none;
 
-    .picture {
+    .pictureContainer {
+        position: relative;
         pointer-events: none;
-        width: 110%;
-        // height: 50%;
-        // min-height: 50%;
-        // max-height: 50%;
-        border-top-left-radius: 0.75rem;
-        border-top-right-radius: 0.75rem;
+        height: 45%;
+        min-height: 45%;
+        max-height: 45%;
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        .picture {
+            min-width: 100%;
+            min-height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
     }
 
     .info {
@@ -258,67 +276,72 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 50%;
-        max-height: 50%;
-        min-height: 50%;
+        justify-content: space-around;
+        height: 55%;
+        max-height: 55%;
+        min-height: 55%;
         width: 100%;
         padding: 0 0.5rem;
 
-        .row1 {
+        .groupRows {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             width: 100%;
             margin-top: 0.5rem;
 
-            .brandLogo {
-                height: 2.5rem;
-                max-height: 2.5rem;
-                min-height: 2.5rem;
+            .row1 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+                .brandLogo {
+                    height: 2.5rem;
+                    max-height: 2.5rem;
+                    min-height: 2.5rem;
+                }
+
+                .name {
+                    overflow: hidden;
+                    margin-left: 0.5rem;
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    text-align: center;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
             }
 
-            .name {
-                overflow: hidden;
-                margin-left: 0.5rem;
-                font-size: 1.3rem;
-                font-weight: 700;
-                text-align: center;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+            .row2 {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+                .cc {
+                    opacity: 0.5;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    text-align: center;
+                }
+
+                .km {
+                    opacity: 0.5;
+                    margin-left: 2rem;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    text-align: center;
+                }
             }
         }
-
-        .row2 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            margin-top: 0.5rem;
-
-            .cc {
-                opacity: 0.5;
-                font-size: 1rem;
-                font-weight: 500;
-                text-align: center;
-            }
-
-            .km {
-                opacity: 0.5;
-                margin-left: 2rem;
-                font-size: 1rem;
-                font-weight: 500;
-                text-align: center;
-            }
-        }
-
         .row3 {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
-            margin-top: 2.5rem;
 
             .oldPrice {
                 color: $motoColor;
@@ -342,7 +365,7 @@
             justify-content: space-between;
             width: 100%;
             width: 75%;
-            margin-top: 2.5rem;
+            margin-bottom: 0.5rem;
 
             .year {
                 opacity: 0.4;
