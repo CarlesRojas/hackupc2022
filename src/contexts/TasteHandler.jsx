@@ -1,11 +1,12 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useRef, useState, useEffect } from "react";
 
 const WORST_TIME = 10000;
 const INITIAL_VALUATION = 100000;
 
 export const TasteHandler = createContext();
 const TasteHandlerProvider = (props) => {
-    const tastesValuation = useRef({
+    console.log(localStorage.getItem("mundimoto_tastesValuation"))
+    const tastesValuation = useRef(JSON.parse(localStorage.getItem("mundimoto_tastesValuation")) || {
         price: {
             "0-1000": INITIAL_VALUATION,
             "1000-1500": INITIAL_VALUATION,
@@ -266,7 +267,6 @@ const TasteHandlerProvider = (props) => {
     };
 
     const newValuation = (price, licence, cc, type, brand, year, km, valuation) => {
-        console.log(`licence ${licence}`)
         const auxTastes = { ...tastesValuation.current };
         auxTastes["price"][price] += valuation;
         auxTastes["licence"][licence] += valuation;
@@ -276,6 +276,7 @@ const TasteHandlerProvider = (props) => {
         auxTastes["year"][year] += valuation;
         auxTastes["km"][km] += valuation;
         tastesValuation.current = auxTastes;
+        localStorage.setItem("mundimoto_tastesValuation", JSON.stringify(auxTastes));
         calcNewPcts();
     };
 

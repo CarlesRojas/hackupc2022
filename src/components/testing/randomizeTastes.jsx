@@ -21,8 +21,6 @@ const Filter = ({ addFilter, removeFilter, category, filter, tastesPct }) => {
 const RandomizeTastes = () => {
     const { tastesPct, likeBike, dislikeBike, addFilter, removeFilter } = useContext(TasteHandler);
 
-    console.log(tastesPct);
-
     const printTastes = (
         <div className="scrollableList">
             {Object.keys(tastesPct).map((category) => {
@@ -51,7 +49,6 @@ const RandomizeTastes = () => {
     );
 
     const getRandom = (dict) => {
-        console.log(dict);
         const array = Object.keys(dict);
         return array[Math.floor(Math.random() * array.length)];
     };

@@ -109,9 +109,8 @@ export default function Home() {
         if (isButton && blockButtons.current) return;
 
         console.log("LIKE");
-        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        console.log(motoData);
-        onValuate(motoData);
+        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto }; 
+        onValuate(motoData)
 
         if (isButton) swapThrow(true);
         else swap();
@@ -122,8 +121,7 @@ export default function Home() {
 
         console.log("PASS");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        console.log(motoData);
-        onValuate(motoData, false);
+        onValuate(motoData, false)
 
         if (isButton) swapThrow(false);
         else swap();

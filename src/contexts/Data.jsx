@@ -1,13 +1,14 @@
-import React, { useContext, createContext, useState, useEffect } from "react";
-
-import { API } from "./API";
+import { createContext, useEffect, useState } from "react";
 
 export const Data = createContext();
 const DataProvider = (props) => {
-    const { getMotosListData } = useContext(API);
-
-    const [myList, setMyList] = useState([]);
+    const [myList, setMyList] = useState(localStorage.getItem("mundimoto_myList"), []);
     const [listData, setListData] = useState([]);
+
+    useEffect(() => {
+        localStorage.setItem("mundimoto_myList", myList);
+        console.log(myList);
+    }, [myList])
 
     const addToMyList = (id, data) => {
         setMyList([...myList], id);
