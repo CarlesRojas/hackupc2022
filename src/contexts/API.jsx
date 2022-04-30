@@ -26,6 +26,26 @@ const APIProvider = (props) => {
         }
     };
 
+    const getNextMoto = async (tastesPct, mySavedList) => {
+        const postData = {...tastesPct, exclude: mySavedList};
+        try {
+            const rawResponse = await fetch(`${API_URL}/motorbikes/next/`, {
+                method: "post",
+                headers: {
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            })
+
+            const response = await rawResponse.json();
+            
+            return response;
+        } catch (error) {
+            return { error };
+        }
+    }
+
     return (
         <API.Provider
             value={{
