@@ -1,0 +1,1 @@
+/api/* http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000/:splat 200

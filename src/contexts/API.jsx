@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 // const API_VERSION = "api_v1";
-const API_URL = "https://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com";
+const API_URL = "/api";
 
 export const API = createContext();
 const APIProvider = (props) => {
