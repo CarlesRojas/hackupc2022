@@ -11,6 +11,7 @@ import APIProvider from "./contexts/API";
 import GlobalStateProvider from "./contexts/GlobalState";
 import DataProvider from "./contexts/Data";
 import MediaQueryProvider from "./contexts/MediaQuery";
+import TasteHandlerProvider from "./contexts/TasteHandler";
 
 ReactDOM.render(
     <StrictMode>
@@ -18,11 +19,13 @@ ReactDOM.render(
             <UtilsProvider>
                 <GlobalStateProvider>
                     <DataProvider>
-                        <APIProvider>
-                            <MediaQueryProvider>
-                                <App />
-                            </MediaQueryProvider>
-                        </APIProvider>
+                        <TasteHandlerProvider>
+                            <APIProvider>
+                                <MediaQueryProvider>
+                                    <App />
+                                </MediaQueryProvider>
+                            </APIProvider>
+                        </TasteHandlerProvider>
                     </DataProvider>
                 </GlobalStateProvider>
             </UtilsProvider>
