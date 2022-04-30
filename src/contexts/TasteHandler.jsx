@@ -18,7 +18,7 @@ const TasteHandlerProvider = (props) => {
             "15000-20000": INITIAL_VALUATION,
             "20000-23000": INITIAL_VALUATION,
         },
-        license: {
+        licence: {
             "am": INITIAL_VALUATION,
             "a1b": INITIAL_VALUATION,
             "a2": INITIAL_VALUATION,
@@ -114,8 +114,7 @@ const TasteHandlerProvider = (props) => {
             "40000-50000": INITIAL_VALUATION,
             "50000-60000": INITIAL_VALUATION,
             "60000-70000": INITIAL_VALUATION,
-        },
-        totalViewed: 0,
+        }
     });
 
     const [tastesPct, setTastesPct] = useState({
@@ -131,7 +130,7 @@ const TasteHandlerProvider = (props) => {
             "15000-20000": 0.1,
             "20000-23000": 0.1,
         },
-        license: {
+        licence: {
             "am": 0.25,
             "a1b": 0.25,
             "a2": 0.25,
@@ -232,59 +231,49 @@ const TasteHandlerProvider = (props) => {
 
     const filters = useRef({});
 
-    const newTasteValuation = (oldValuation, newValuation, totalViewed) => {
-        return Math.max((oldValuation * totalViewed + newValuation) / (totalViewed + 1), 0);
-    };
-
     const calcNewPcts = () => {
         const newPcts = {};
         const actualValuation = tastesValuation.current;
         for (var category in actualValuation) {
-            if (category !== "totalViewed") {
-                var totalValuation = 0;
-                var numberOfZeroPct = 0;
-                newPcts[category] = {};
-                for (var key in actualValuation[category]) {
-                    if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
-                        if (actualValuation[category][key] === 0) {
-                            numberOfZeroPct += 1;
-                        } else totalValuation += actualValuation[category][key];
-                    }
+            var totalValuation = 0;
+            var numberOfZeroPct = 0;
+            newPcts[category] = {};
+            for (var key in actualValuation[category]) {
+                if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
+                    if (actualValuation[category][key] === 0) {
+                        numberOfZeroPct += 1;
+                    } else totalValuation += actualValuation[category][key];
                 }
-                totalValuation += (totalValuation / 100) * numberOfZeroPct;
-                for (key in actualValuation[category]) {
-                    if (filters.current[category] != null) {
-                        if (!filters.current[category].includes(key)) newPcts[category][key] = 0.0;
-                        else {
-                            if (actualValuation[category][key] === 0) {
-                                if (filters.current[category].length === 1) newPcts[category][key] = 1.0;
-                                else newPcts[category][key] = 0.0;
-                            } else newPcts[category][key] = actualValuation[category][key] / totalValuation;
-                        }
-                    } else {
-                        if (actualValuation[category][key] === 0) newPcts[category][key] = 0.01;
-                        else newPcts[category][key] = actualValuation[category][key] / totalValuation;
+            }
+            totalValuation += (totalValuation / 100) * numberOfZeroPct;
+            for (key in actualValuation[category]) {
+                if (filters.current[category] != null) {
+                    if (!filters.current[category].includes(key)) newPcts[category][key] = 0.0;
+                    else {
+                        if (actualValuation[category][key] === 0) {
+                            if (filters.current[category].length === 1) newPcts[category][key] = 1.0;
+                            else newPcts[category][key] = 0.0;
+                        } else newPcts[category][key] = actualValuation[category][key] / totalValuation;
                     }
+                } else {
+                    if (actualValuation[category][key] === 0) newPcts[category][key] = 0.01;
+                    else newPcts[category][key] = actualValuation[category][key] / totalValuation;
                 }
             }
         }
         setTastesPct(newPcts);
     };
 
-    const newValuation = (price, license, cc, type, brand, year, km, valuation) => {
+    const newValuation = (price, licence, cc, type, brand, year, km, valuation) => {
+        console.log(`licence ${licence}`)
         const auxTastes = { ...tastesValuation.current };
-        auxTastes["price"][price] = newTasteValuation(auxTastes["price"][price], valuation, auxTastes["totalViewed"]);
-        auxTastes["license"][license] = newTasteValuation(
-            auxTastes["license"][license],
-            valuation,
-            auxTastes["totalViewed"]
-        );
-        auxTastes["cc"][cc] = newTasteValuation(auxTastes["cc"][cc], valuation, auxTastes["totalViewed"]);
-        auxTastes["type"][type] = newTasteValuation(auxTastes["type"][type], valuation, auxTastes["totalViewed"]);
-        auxTastes["brand"][brand] = newTasteValuation(auxTastes["brand"][brand], valuation, auxTastes["totalViewed"]);
-        auxTastes["year"][year] = newTasteValuation(auxTastes["year"][year], valuation, auxTastes["totalViewed"]);
-        auxTastes["km"][km] = newTasteValuation(auxTastes["km"][km], valuation, auxTastes["totalViewed"]);
-        auxTastes["totalViewed"] += 1;
+        auxTastes["price"][price] += valuation;
+        auxTastes["licence"][licence] += valuation;
+        auxTastes["cc"][cc] += valuation;
+        auxTastes["type"][type] += valuation;
+        auxTastes["brand"][brand] += valuation;
+        auxTastes["year"][year] += valuation;
+        auxTastes["km"][km] += valuation;
         tastesValuation.current = auxTastes;
         calcNewPcts();
     };
@@ -299,22 +288,22 @@ const TasteHandlerProvider = (props) => {
         return "err";
     };
 
-    const likeBike = (price, license, cc, type, brand, year, km, timeToLike) => {
+    const likeBike = (price, licence, cc, type, brand, year, km, timeToLike) => {
         const priceInterval = findInterval(price, tastesPct["price"]);
         const ccInterval = findInterval(cc, tastesPct["cc"]);
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
         const valuation = WORST_TIME - timeToLike;
-        newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
+        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
     };
 
-    const dislikeBike = (price, license, cc, type, brand, year, km, timeToLike) => {
+    const dislikeBike = (price, licence, cc, type, brand, year, km, timeToLike) => {
         const valuation = timeToLike - WORST_TIME;
         const priceInterval = findInterval(price, tastesPct["price"]);
         const ccInterval = findInterval(cc, tastesPct["cc"]);
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
-        newValuation(priceInterval, license, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
+        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
     };
 
     const addFilter = (category, toFilter) => {
