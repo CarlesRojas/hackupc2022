@@ -5,16 +5,14 @@ import YesIcon from "../resources/icons/check.svg";
 import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
-import { TasteHandler } from '../contexts/TasteHandler'
+import { TasteHandler } from "../contexts/TasteHandler";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
+    const { likeBike, dislikeBike } = useContext(TasteHandler);
 
-    const {
-        likeBike,
-        dislikeBike,
-    } = useContext(TasteHandler)
+    const startTime = useRef(performance.now());
 
     const [firstState, setFirstState] = useState({
         shown: true,
@@ -33,7 +31,7 @@ export default function Home() {
     const [firstMoto, setFirstMoto] = useState({
         id: "0001",
         name: "Yamaha RTX Turbo Pro",
-        oldPrice: 10000,
+        old_price: 10000,
         price: 7500,
         licence: "a",
         cc: 5000,
@@ -48,7 +46,7 @@ export default function Home() {
     const [secondMoto, setSecondMoto] = useState({
         id: "0002",
         name: "Honda RTX Turbo Pro",
-        oldPrice: 10000,
+        old_price: 10000,
         price: 7500,
         licence: "a",
         cc: 5000,
@@ -97,7 +95,11 @@ export default function Home() {
     };
 
     const onValuate = (motoData, like = true) => {
-        const rand = Math.random() * 10000;
+        const endTime = performance.now();
+        const elapsed = Math.min(endTime - startTime.current, 10000);
+        startTime.current = endTime;
+        console.log(elapsed)
+
         const price = Math.random() * 23000;
         const licence = motoData["licence"];
         const cc = Math.random() * 2000;
@@ -105,16 +107,15 @@ export default function Home() {
         const brand = motoData["brand"];
         const year = 1980 + Math.random() * 42;
         const km = Math.random() * 70000;
-        if (like) likeBike(price, licence, cc, type, brand, year, km, rand)
-        else dislikeBike(price, licence, cc, type, brand, year, km, rand)
-    }
+        if (like) likeBike(price, licence, cc, type, brand, year, km, elapsed);
+        else dislikeBike(price, licence, cc, type, brand, year, km, elapsed);
+    };
 
     const handleLike = (isButton) => {
         if (isButton && blockButtons.current) return;
 
         console.log("LIKE");
-        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        console.log(motoData);
+        const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto }; 
         onValuate(motoData)
 
         if (isButton) swapThrow(true);
@@ -126,7 +127,6 @@ export default function Home() {
 
         console.log("PASS");
         const motoData = firstState.shown ? { ...firstMoto } : { ...secondMoto };
-        console.log(motoData);
         onValuate(motoData, false)
 
         if (isButton) swapThrow(false);

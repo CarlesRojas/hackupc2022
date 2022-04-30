@@ -134,7 +134,8 @@
 .List {
     height: 100%;
     width: 100%;
-    background-color: rgb(255, 236, 236);
+    padding: 0.5rem;
+    overflow-y: scroll;
 }
 
 .Home {
@@ -220,7 +221,97 @@
 .Filter {
     height: 100%;
     width: 100%;
-    background-color: rgb(231, 246, 255);
+    overflow-y: scroll;
+    padding: 0.5rem;
+
+    .title {
+        margin-top: 0.2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1.5rem 0.7rem;
+        margin: 0.5rem 0 2.5rem;
+
+        &.small {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+    }
+}
+
+.FilterElement {
+    transition: opacity 0.2s ease-in-out;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+
+    &.disabled {
+        opacity: 0.2;
+    }
+
+    .topContainer {
+        width: 100%;
+        max-width: 100%;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+
+        .svg,
+        .image {
+            max-width: 100%;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .svg {
+            opacity: 0.8;
+        }
+
+        .image {
+            padding: 0.5rem;
+        }
+
+        .filterNameSmall {
+            width: 100%;
+            max-width: 100%;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        .filterName {
+            width: 100%;
+            margin-top: 0.2rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0.9;
+        }
+    }
+
+    .valuationBarContainer {
+        position: relative;
+        margin-top: 0.25rem;
+        width: 100%;
+        height: 0.7rem;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        .barProgress {
+            transition: width 0.2s ease-in-out;
+            height: 100%;
+            background-color: red;
+        }
+    }
 }
 
 .Card {
@@ -343,7 +434,7 @@
             justify-content: center;
             width: 100%;
 
-            .oldPrice {
+            .old_price {
                 color: $motoColor;
                 font-size: 1.1rem;
                 font-weight: 500;
@@ -405,13 +496,13 @@
     }
 }
 
-
 .RandomizeTest {
     background-color: rgb(235, 125, 125);
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+
     .scrollableList {
         flex-grow: 1;
         width: 100%;
@@ -425,5 +516,226 @@
     }
     .randomizeButton {
         height: 20;
+    }
+}
+
+.Item {
+    transition: height 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: $listItemCollapsedHeight;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+
+    &.selected {
+        height: $listItemHeight;
+
+        .header {
+            .image {
+                border-bottom-right-radius: 0.75rem;
+            }
+        }
+    }
+
+    .header {
+        position: relative;
+        width: 100%;
+        height: $listItemCollapsedHeight;
+        min-height: $listItemCollapsedHeight;
+        max-height: $listItemCollapsedHeight;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .image {
+            transition: border-bottom-right-radius 0.2s ease-in-out;
+            height: $listItemCollapsedHeight;
+            min-height: $listItemCollapsedHeight;
+            max-height: $listItemCollapsedHeight;
+            width: 30%;
+            min-width: 30%;
+            max-width: 30%;
+            object-fit: cover;
+            object-position: center;
+            border-top-left-radius: 0.75rem;
+            border-bottom-right-radius: 0rem;
+        }
+
+        .primaryInfo {
+            height: $listItemCollapsedHeight;
+            min-height: $listItemCollapsedHeight;
+            max-height: $listItemCollapsedHeight;
+            width: 60%;
+            min-width: 60%;
+            max-width: 60%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            .nameContainer {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 0.5rem;
+
+                .brandLogo {
+                    height: 2rem;
+                    max-height: 2rem;
+                    min-height: 2rem;
+                }
+
+                .name {
+                    overflow: hidden;
+                    margin-left: 0.5rem;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    text-align: center;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            .prices {
+                display: flex;
+                align-items: baseline;
+                width: 100%;
+                padding: 0 0.5rem 0.5rem 0.5rem;
+
+                .old_price {
+                    color: $motoColor;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    text-align: center;
+                    text-decoration: line-through;
+                }
+
+                .price {
+                    margin-left: 0.5rem;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    text-align: center;
+                }
+            }
+        }
+
+        .cross {
+            height: $listItemCollapsedHeight;
+            min-height: $listItemCollapsedHeight;
+            max-height: $listItemCollapsedHeight;
+            width: 10%;
+            min-width: 10%;
+            max-width: 10%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3%;
+            color: rgb(197, 197, 197);
+        }
+    }
+
+    .footer {
+        transition: opacity 0.4s ease-in-out;
+        pointer-events: none;
+        opacity: 0;
+        flex-grow: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        justify-content: space-between;
+
+        &.selected {
+            pointer-events: all;
+            opacity: 1;
+        }
+
+        .row1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+
+            .cc {
+                opacity: 0.5;
+                font-size: 1rem;
+                font-weight: 500;
+                text-align: center;
+            }
+
+            .km {
+                opacity: 0.5;
+                margin-left: 2rem;
+                font-size: 1rem;
+                font-weight: 500;
+                text-align: center;
+            }
+        }
+
+        .row2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            width: 75%;
+            margin-bottom: 0.5rem;
+
+            .year {
+                opacity: 0.4;
+                font-size: 1.2rem;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .licence {
+                height: 2rem;
+                max-height: 2rem;
+                min-height: 2rem;
+                opacity: 0.4;
+            }
+
+            .type {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.4;
+
+                .icon {
+                    height: 2rem;
+                    max-height: 2rem;
+                    min-height: 2rem;
+                }
+
+                .name {
+                    opacity: 0.9;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    text-align: center;
+                }
+            }
+        }
+
+        .buy {
+            width: 50%;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: $motoColor;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+        }
     }
 }
