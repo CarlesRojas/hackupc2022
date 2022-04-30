@@ -3,10 +3,10 @@ import SVG from "react-inlinesvg";
 import { useSpring, animated } from "react-spring";
 import { useDrag } from "@use-gesture/react";
 
-import { BRAND_LOGOS, LICENCES, TYPES } from './images'
+import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
 export default function Card({ data, shown, onLike, onPass, id }) {
-    const { /*id,*/ name, oldPrice, price, licence, cc, type, brand, year, km, image /*, url*/ } = data;
+    const { /*id,*/ name, old_price, price, licence, cc, type, brand, year, km, image /*, url*/ } = data;
 
     const [{ x, scale, opacity }, api] = useSpring(() => ({
         x: 0,
@@ -141,7 +141,7 @@ export default function Card({ data, shown, onLike, onPass, id }) {
                 </div>
 
                 <div className="row3">
-                    <p className="oldPrice">{`${oldPrice.toLocaleString("es-ES")} €`}</p>
+                    <p className="old_price">{`${old_price.toLocaleString("es-ES")} €`}</p>
                     <p className="price">{`${price.toLocaleString("es-ES")} €`}</p>
                 </div>
 

@@ -18,15 +18,15 @@ ReactDOM.render(
         <EventsProvider>
             <UtilsProvider>
                 <GlobalStateProvider>
-                    <DataProvider>
-                        <TasteHandlerProvider>
-                            <APIProvider>
+                    <APIProvider>
+                        <DataProvider>
+                            <TasteHandlerProvider>
                                 <MediaQueryProvider>
                                     <App />
                                 </MediaQueryProvider>
-                            </APIProvider>
-                        </TasteHandlerProvider>
-                    </DataProvider>
+                            </TasteHandlerProvider>
+                        </DataProvider>
+                    </APIProvider>
                 </GlobalStateProvider>
             </UtilsProvider>
         </EventsProvider>
