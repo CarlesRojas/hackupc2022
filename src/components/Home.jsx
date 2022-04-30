@@ -8,7 +8,7 @@ import Card from "./Card";
 import { TasteHandler } from "../contexts/TasteHandler";
 import { Data } from "../contexts/Data";
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
     const { firstMoto, secondMoto, loadNextMoto, addToMyList } = useContext(Data);
@@ -36,11 +36,13 @@ export default function Home() {
         if (firstState.shown) {
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(true);
+            // await sleep(500);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
         } else {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(false);
+            // await sleep(500);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
         }
@@ -53,6 +55,7 @@ export default function Home() {
             setFirstState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(true);
+            // await sleep(500);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             blockButtons.current = false;
@@ -60,6 +63,7 @@ export default function Home() {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
             await loadNextMoto(false);
+            // await sleep(500);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             blockButtons.current = false;

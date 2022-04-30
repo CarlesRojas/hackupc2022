@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef } from "react";
 import SVG from "react-inlinesvg";
 import { useSpring, animated } from "react-spring";
 import { useDrag } from "@use-gesture/react";
-import cn from "classnames";
 
 import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
@@ -15,7 +14,6 @@ const IMG_URL = `${API_URL}/fileManager/image`;
 
 export default function Card({ data, shown, onLike, onPass, cardId }) {
     const { id, name, old_price, price, licence, cc, type, brand, year, km /*, url*/ } = data;
-    console.log(cardId);
 
     const [{ x, scale, opacity }, api] = useSpring(() => ({
         x: 0,

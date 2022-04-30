@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useEffect, useState, useContext, useRef } from "react";
 
 import { API } from "./API";
 import { TasteHandler } from "./TasteHandler";
@@ -40,7 +40,11 @@ const DataProvider = (props) => {
         else setSecondMoto(newMoto);
     };
 
+    const firstPassDone = useRef(false);
     useEffect(() => {
+        if (firstPassDone.current) return;
+        firstPassDone.current = true;
+
         const getData = async () => {
             // Load next 2 motos
             const newMotoOne = await getNextMoto(tastesPct, myList);
@@ -49,7 +53,6 @@ const DataProvider = (props) => {
             setSecondMoto(newMotoTwo);
 
             // Load saved List
-            // const mySavedList = ["0000000074", "0000000075", "0000000076"];
             const mySavedList = JSON.parse(localStorage.getItem("mundimoto_myList")) || [];
             setMyList(mySavedList);
 
@@ -58,7 +61,7 @@ const DataProvider = (props) => {
         };
 
         getData();
-    }, [getMotosListData]);
+    }, [getMotosListData, getNextMoto, myList, tastesPct]);
 
     return (
         <Data.Provider

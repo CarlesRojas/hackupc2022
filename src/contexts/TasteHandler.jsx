@@ -1,4 +1,5 @@
-import { createContext, useRef, useState, useEffect } from "react";
+import { toKeyAlias } from "@babel/types";
+import { createContext, useRef, useState } from "react";
 
 const WORST_TIME = 10000;
 const INITIAL_VALUATION = 100000;
@@ -243,7 +244,7 @@ const TasteHandlerProvider = (props) => {
             newPcts[category] = {};
             for (var key in actualValuation[category]) {
                 if (!(filters.current[category] != null && !filters.current[category].includes(key))) {
-                    if (actualValuation[category][key] === 0) {
+                    if (actualValuation[category][key] <= 0) {
                         numberOfZeroPct += 1;
                     } else totalValuation += actualValuation[category][key];
                 }
@@ -253,13 +254,13 @@ const TasteHandlerProvider = (props) => {
                 if (filters.current[category] != null) {
                     if (!filters.current[category].includes(key)) newPcts[category][key] = 0.0;
                     else {
-                        if (actualValuation[category][key] === 0) {
+                        if (actualValuation[category][key] <= 0) {
                             if (filters.current[category].length === 1) newPcts[category][key] = 1.0;
                             else newPcts[category][key] = 0.0;
                         } else newPcts[category][key] = actualValuation[category][key] / totalValuation;
                     }
                 } else {
-                    if (actualValuation[category][key] === 0) newPcts[category][key] = 0.01;
+                    if (actualValuation[category][key] <= 0) newPcts[category][key] = 0.01;
                     else newPcts[category][key] = actualValuation[category][key] / totalValuation;
                 }
             }
@@ -272,6 +273,7 @@ const TasteHandlerProvider = (props) => {
         auxTastes["price"][price] += valuation;
         auxTastes["licence"][licence] += valuation;
         auxTastes["cc"][cc] += valuation;
+        console.log(type, valuation);
         auxTastes["type"][type] += valuation;
         auxTastes["brand"][brand] += valuation;
         auxTastes["year"][year] += valuation;
@@ -283,12 +285,12 @@ const TasteHandlerProvider = (props) => {
 
     const findInterval = (value, dict) => {
         const keys = Object.keys(dict);
-        if (value === parseInt(keys[0].split("-"))) return keys[0];
+        if (value === parseInt(keys[0].split("-")[0])) return keys[0];
         for (var key in dict) {
             const interval = key.split("-");
             if (parseInt(interval[0]) < value && value <= parseInt(interval[1])) return key;
         }
-        return "err";
+        return keys[keys.length - 1];
     };
 
     const likeBike = (price, licence, cc, type, brand, year, km, timeToLike) => {
@@ -297,7 +299,7 @@ const TasteHandlerProvider = (props) => {
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
         const valuation = WORST_TIME - timeToLike;
-        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
+        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, valuation);
     };
 
     const dislikeBike = (price, licence, cc, type, brand, year, km, timeToLike) => {
@@ -306,7 +308,7 @@ const TasteHandlerProvider = (props) => {
         const ccInterval = findInterval(cc, tastesPct["cc"]);
         const yearInterval = findInterval(year, tastesPct["year"]);
         const kmInterval = findInterval(km, tastesPct["km"]);
-        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, timeToLike, valuation);
+        newValuation(priceInterval, licence, ccInterval, type, brand, yearInterval, kmInterval, valuation);
     };
 
     const addFilter = (category, toFilter) => {

@@ -31,6 +31,8 @@ const APIProvider = (props) => {
 
     const motos = useRef([]);
 
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
     const getNextMoto = async (tastesPct, mySavedList) => {
         let motosCopy = [...motos.current];
 
@@ -39,6 +41,8 @@ const APIProvider = (props) => {
         if (motosCopy.length <= 1) {
             const nextThreeMotos = await getNextThreeMotos(tastesPct, mySavedList);
             motosCopy = motosCopy.concat(nextThreeMotos);
+        } else {
+            await sleep(400);
         }
         motos.current = motosCopy;
 
