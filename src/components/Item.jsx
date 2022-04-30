@@ -7,7 +7,7 @@ import useThrottle from "../hooks/useThrottle";
 
 import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
-const IMG_URL = "http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000/fileManager/image";
+const IMG_URL = "/api/fileManager/image";
 
 export default function Item({ data, selected, selectThis, removeThisFromList, closeSelected }) {
     const { id, name, old_price, price, licence, cc, type, brand, year, km, url } = data;
