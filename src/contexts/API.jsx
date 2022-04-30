@@ -19,7 +19,6 @@ const APIProvider = (props) => {
             });
 
             const response = await rawResponse.json();
-            console.log(response);
 
             return response;
         } catch (error) {

@@ -221,7 +221,97 @@
 .Filter {
     height: 100%;
     width: 100%;
-    background-color: rgb(231, 246, 255);
+    overflow-y: scroll;
+    padding: 0.5rem;
+
+    .title {
+        margin-top: 0.2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1.5rem 0.7rem;
+        margin: 0.5rem 0 2.5rem;
+
+        &.small {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+    }
+}
+
+.FilterElement {
+    transition: opacity 0.2s ease-in-out;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+
+    &.disabled {
+        opacity: 0.2;
+    }
+
+    .topContainer {
+        width: 100%;
+        max-width: 100%;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+
+        .svg,
+        .image {
+            max-width: 100%;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .svg {
+            opacity: 0.8;
+        }
+
+        .image {
+            padding: 0.5rem;
+        }
+
+        .filterNameSmall {
+            width: 100%;
+            max-width: 100%;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        .filterName {
+            width: 100%;
+            margin-top: 0.2rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0.9;
+        }
+    }
+
+    .valuationBarContainer {
+        position: relative;
+        margin-top: 0.25rem;
+        width: 100%;
+        height: 0.7rem;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        .barProgress {
+            transition: width 0.2s ease-in-out;
+            height: 100%;
+            background-color: red;
+        }
+    }
 }
 
 .Card {
