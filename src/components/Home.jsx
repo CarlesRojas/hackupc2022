@@ -12,6 +12,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export default function Home() {
     const { likeBike, dislikeBike } = useContext(TasteHandler);
 
+    const startTime = useRef(performance.now());
+
     const [firstState, setFirstState] = useState({
         shown: true,
         blocked: false,
@@ -93,7 +95,11 @@ export default function Home() {
     };
 
     const onValuate = (motoData, like = true) => {
-        const rand = Math.random() * 10000;
+        const endTime = performance.now();
+        const elapsed = Math.min(endTime - startTime.current, 10000);
+        startTime.current = endTime;
+        console.log(elapsed)
+
         const price = Math.random() * 23000;
         const licence = motoData["licence"];
         const cc = Math.random() * 2000;
@@ -101,8 +107,8 @@ export default function Home() {
         const brand = motoData["brand"];
         const year = 1980 + Math.random() * 42;
         const km = Math.random() * 70000;
-        if (like) likeBike(price, licence, cc, type, brand, year, km, rand);
-        else dislikeBike(price, licence, cc, type, brand, year, km, rand);
+        if (like) likeBike(price, licence, cc, type, brand, year, km, elapsed);
+        else dislikeBike(price, licence, cc, type, brand, year, km, elapsed);
     };
 
     const handleLike = (isButton) => {

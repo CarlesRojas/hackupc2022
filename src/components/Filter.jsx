@@ -7,7 +7,7 @@ import { TasteHandler } from "../contexts/TasteHandler";
 import FilterElement from "./FilterElement";
 
 export default function Filter() {
-    const { tastesPct, addFilter, removeFilter, filtersEnabled } = useContext(TasteHandler);
+    const { tastesPct, addFilter, removeFilter, filtersEnabled, filters } = useContext(TasteHandler);
 
     return (
         <div className="Filter">
@@ -28,6 +28,7 @@ export default function Filter() {
                                     removeFilter(category, filter);
                                 }}
                                 filterEnabled={filtersEnabled.current.includes(category)}
+                                filters={filters}
                             />
                         ))}
                     </div>

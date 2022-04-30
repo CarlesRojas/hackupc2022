@@ -341,6 +341,7 @@ const TasteHandlerProvider = (props) => {
             value={{
                 tastesPct,
                 filtersEnabled,
+                filters,
                 likeBike,
                 dislikeBike,
                 addFilter,
