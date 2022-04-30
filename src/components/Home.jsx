@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import SVG from "react-inlinesvg";
 import useThrottle from "../hooks/useThrottle";
 
@@ -6,7 +6,12 @@ import YesIcon from "../resources/icons/check.svg";
 import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 export default function Home() {
+    const [firstShown, setFirstShown] = useState({ shown: true, blocked: false });
+    const [secondShown, setSecondShown] = useState({ shown: false, blocked: true });
+
     const [firstMoto, setFirstMoto] = useState({
         id: "0001",
         name: "Yamaha RTX Turbo Pro",
@@ -37,19 +42,35 @@ export default function Home() {
         url: "https://mundimoto.com/es/motos-segunda-mano-ocasion/naked/yamaha/mt-01-promo-1nbD8Jpw62QTzAbPFLHe",
     });
 
+    const swap = async () => {
+        if (firstShown.shown) {
+            setSecondShown({ shown: true, blocked: true });
+            await sleep(500);
+            setFirstShown({ shown: false, blocked: true });
+            setSecondShown({ shown: true, blocked: false });
+        } else {
+            setFirstShown({ shown: true, blocked: true });
+            await sleep(500);
+            setFirstShown({ shown: true, blocked: false });
+            setSecondShown({ shown: false, blocked: true });
+        }
+    };
+
     const handleLike = useThrottle((newIndex) => {
         console.log("LIKE");
+        swap();
     }, 300);
 
     const handlePass = useThrottle((newIndex) => {
         console.log("PASS");
+        swap();
     }, 300);
 
     return (
         <div className="Home">
             <div className="cardContainer">
-                <Card data={firstMoto} state={"front"} onLike={handleLike} onPass={handlePass} />
-                {/* <Card data={secondMoto} state={"back"} onLike={handleLike} onPass={handlePass} /> */}
+                <Card data={firstMoto} shown={firstShown} onLike={handleLike} onPass={handlePass} id={"first"} />
+                <Card data={secondMoto} shown={secondShown} onLike={handleLike} onPass={handlePass} id={"second"} />
             </div>
 
             <div className="buttonsContainer">

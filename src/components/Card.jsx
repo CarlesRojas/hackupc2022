@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import SVG from "react-inlinesvg";
+import { useSpring, animated } from "react-spring";
+import { useDrag } from "@use-gesture/react";
 
 import apriliaBrand from "../resources/icons/brands/aprilia.png";
 import benelliBrand from "../resources/icons/brands/benelli.png";
@@ -129,15 +131,119 @@ const TYPES = {
     tresRuedas: tresRuedasType,
 };
 
-export default function Card({ data, state, onLike, onPass }) {
+export default function Card({ data, shown, onLike, onPass, id }) {
     const { /*id,*/ name, oldPrice, price, licence, cc, type, brand, year, km, image /*, url*/ } = data;
 
-    console.log(LICENCES[licence]);
-    console.log(LICENCES);
-    console.log(licence);
+    const initialHourI = useRef(0);
+
+    const [{ x, scale, opacity }, api] = useSpring(() => ({
+        x: 0,
+        scale: 0.5,
+        opacity: 0,
+    }));
+
+    const swipingRight = useRef(true);
+
+    const throwRight = useCallback(() => {
+        api.start({
+            x: window.innerWidth,
+            scale: 1,
+            opacity: 0,
+        });
+
+        onLike();
+    }, [api, onLike]);
+
+    const throwLeft = useCallback(() => {
+        api.start({
+            x: -window.innerWidth,
+            scale: 1,
+            opacity: 0,
+        });
+
+        onPass();
+    }, [api, onPass]);
+
+    const center = useCallback(() => {
+        api.start({
+            x: 0,
+            scale: 1,
+            opacity: 1,
+        });
+    }, [api]);
+
+    const hide = useCallback(() => {
+        api.start({
+            x: 0,
+            scale: 0.5,
+            opacity: 0,
+            immediate: true,
+        });
+    }, [api]);
+
+    const horizontalGestureBind = useDrag(
+        ({ event, cancel, canceled, down, movement: [mx], velocity: [vx], direction: [xDir] }) => {
+            event.stopPropagation();
+
+            if (canceled) return;
+
+            const throwAway = vx > 1.5 || Math.abs(mx) > window.innerWidth * 0.6;
+
+            if (!down) {
+                if (throwAway && swipingRight.current) throwRight();
+                else if (throwAway) throwLeft();
+                else center();
+            } else {
+                if (throwAway && swipingRight.current) {
+                    throwRight();
+                    cancel();
+                    return;
+                } else if (throwAway) {
+                    throwLeft();
+                    cancel();
+                    return;
+                }
+
+                const dir = xDir < 0 ? -1 : 1;
+                swipingRight.current = dir >= 0;
+
+                api.start({
+                    x: mx,
+                    scale: 1,
+                    opacity: 1,
+                });
+            }
+        },
+        { filterTaps: true, axis: "x" }
+    );
+
+    // console.log(id, shown);
+
+    useEffect(() => {
+        if (shown.shown) {
+            console.log(`Center ${id}`);
+            center();
+        } else {
+            console.log(`Hide ${id}`);
+            hide();
+        }
+    }, [center, hide, shown]);
+
+    // First time only
+    const firstTimeDone = useRef(false);
+    useEffect(() => {
+        if (firstTimeDone.current) return;
+        firstTimeDone.current = true;
+
+        if (shown.shown) center();
+    }, [center, shown]);
 
     return (
-        <div className="Card">
+        <animated.div
+            className="Card"
+            style={{ x, scale, opacity, pointerEvents: shown.blocked ? "none" : "all" }}
+            {...horizontalGestureBind()}
+        >
             <img src={image} alt="" className="picture" />
 
             <div className="info">
@@ -165,6 +271,6 @@ export default function Card({ data, state, onLike, onPass }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </animated.div>
     );
 }
