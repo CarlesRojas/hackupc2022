@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import SVG from "react-inlinesvg";
 import cn from "classnames";
 
@@ -6,9 +6,7 @@ import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
 import { TYPES_TRANSLATION, BRANDS_TRANSLATION, LICENCES_TRANSLATION } from "./translates";
 
-const FilterElement = ({ category, filter, value, onSelect, onDiselect, filterEnabled, filters }) => {
-    const [enabled, setEnabled] = useState(filters.current[category]?.includes(filter) ? true : false);
-
+const FilterElement = ({ category, filter, selectFilter, isActive }) => {
     const image =
         category === "brand" ? (
             <img className="image" src={BRAND_LOGOS[filter]} alt="" />
@@ -50,24 +48,9 @@ const FilterElement = ({ category, filter, value, onSelect, onDiselect, filterEn
     );
 
     return (
-        <div className={cn("FilterElement", { disabled: filterEnabled && !enabled })}>
-            <div
-                className="topContainer"
-                onClick={() => {
-                    if (enabled) onDiselect();
-                    else onSelect();
-                    setEnabled(!enabled);
-                }}
-            >
+        <div className={cn("FilterElement", { disabled: !isActive })}>
+            <div className="topContainer" onClick={selectFilter}>
                 {topContainer}
-            </div>
-            <div className="valuationBarContainer">
-                <div
-                    className="barProgress"
-                    style={{
-                        width: `${Math.floor(value * 100)}%`,
-                    }}
-                />
             </div>
         </div>
     );

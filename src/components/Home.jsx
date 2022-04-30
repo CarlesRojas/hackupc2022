@@ -5,14 +5,12 @@ import YesIcon from "../resources/icons/check.svg";
 import NoIcon from "../resources/icons/cross.svg";
 import Card from "./Card";
 
-import { TasteHandler } from "../contexts/TasteHandler";
 import { Data } from "../contexts/Data";
 
 // const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
-    const { firstMoto, secondMoto, loadNextMoto, addToMyList } = useContext(Data);
-    const { likeBike, dislikeBike } = useContext(TasteHandler);
+    const { firstMoto, secondMoto, loadNextMoto, addToMyList, likeMoto, passMoto } = useContext(Data);
 
     const startTime = useRef(performance.now());
 
@@ -36,13 +34,11 @@ export default function Home() {
         if (firstState.shown) {
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(true);
-            // await sleep(500);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
         } else {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(false);
-            // await sleep(500);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
         }
@@ -55,7 +51,6 @@ export default function Home() {
             setFirstState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
             setSecondState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             await loadNextMoto(true);
-            // await sleep(500);
             setFirstState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             blockButtons.current = false;
@@ -63,7 +58,6 @@ export default function Home() {
             setFirstState({ shown: true, blocked: true, throwRight: false, throwLeft: false });
             setSecondState({ shown: true, blocked: true, throwRight: right, throwLeft: !right });
             await loadNextMoto(false);
-            // await sleep(500);
             setFirstState({ shown: true, blocked: false, throwRight: false, throwLeft: false });
             setSecondState({ shown: false, blocked: true, throwRight: false, throwLeft: false });
             blockButtons.current = false;
@@ -72,22 +66,14 @@ export default function Home() {
 
     const onValuate = (motoData, like = true) => {
         const endTime = performance.now();
-        const elapsed = Math.min(endTime - startTime.current, 10000);
+        const decisionTime = Math.min(endTime - startTime.current, 10000);
         startTime.current = endTime;
 
-        const price = motoData.price;
-        const licence = motoData.licence;
-        const cc = motoData.cc;
-        const type = motoData.type;
-        const brand = motoData.brand;
-        const year = motoData.year;
-        const km = motoData.km;
-
         if (like) {
-            likeBike(price, licence, cc, type, brand, year, km, elapsed);
+            likeMoto(motoData, decisionTime);
 
             addToMyList(motoData.id, motoData);
-        } else dislikeBike(price, licence, cc, type, brand, year, km, elapsed);
+        } else passMoto(motoData, decisionTime);
     };
 
     const handleLike = (isButton) => {

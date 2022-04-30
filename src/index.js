@@ -11,22 +11,19 @@ import APIProvider from "./contexts/API";
 import GlobalStateProvider from "./contexts/GlobalState";
 import DataProvider from "./contexts/Data";
 import MediaQueryProvider from "./contexts/MediaQuery";
-import TasteHandlerProvider from "./contexts/TasteHandler";
 
 ReactDOM.render(
     <StrictMode>
         <EventsProvider>
             <UtilsProvider>
                 <GlobalStateProvider>
-                    <TasteHandlerProvider>
-                        <APIProvider>
-                            <DataProvider>
-                                <MediaQueryProvider>
-                                    <App />
-                                </MediaQueryProvider>
-                            </DataProvider>
-                        </APIProvider>
-                    </TasteHandlerProvider>
+                    <APIProvider>
+                        <DataProvider>
+                            <MediaQueryProvider>
+                                <App />
+                            </MediaQueryProvider>
+                        </DataProvider>
+                    </APIProvider>
                 </GlobalStateProvider>
             </UtilsProvider>
         </EventsProvider>

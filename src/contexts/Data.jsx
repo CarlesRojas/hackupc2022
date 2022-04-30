@@ -1,15 +1,126 @@
 import { createContext, useEffect, useState, useContext, useRef } from "react";
-
 import { API } from "./API";
-import { TasteHandler } from "./TasteHandler";
 
 export const Data = createContext();
 const DataProvider = (props) => {
-    const { getMotosListData, getNextMoto } = useContext(API);
-    const { tastesPct } = useContext(TasteHandler);
+    const { getMotosListData, getNextMoto, getLimits } = useContext(API);
 
     const [myList, setMyList] = useState([]);
     const [listData, setListData] = useState([]);
+    const totalValuated = useRef(JSON.parse(localStorage.getItem("mundimoto_totalValuated")) || 0);
+    const limits = useRef({
+        year: { min: -1, max: -1, median: -1 },
+        cc: { min: -1, max: -1, median: -1 },
+        km: { min: -1, max: -1, median: -1 },
+        price: { min: -1, max: -1, median: -1 },
+    });
+    const [medians, setMedians] = useState(JSON.parse(localStorage.getItem("mundimoto_medians")) || null);
+
+    const [filtersStatus, setFiltersStatus] = useState({
+        type: {
+            classic: true,
+            custom: true,
+            maxiScooter: true,
+            naked: true,
+            offRoad: true,
+            scooter: true,
+            sport: true,
+            touring: true,
+            trail: true,
+            tresRuedas: true,
+        },
+        licence: { a: true, a1b: true, a2: true, am: true },
+        brand: {
+            aprilia: true,
+            benelli: true,
+            bmw: true,
+            brixton: true,
+            cake: true,
+            cfmoto: true,
+            daelim: true,
+            derbi: true,
+            ducati: true,
+            fantic: true,
+            fbMondial: true,
+            fkMotors: true,
+            fkm: true,
+            gasGas: true,
+            gilera: true,
+            goes: true,
+            hanway: true,
+            harleyDavidson: true,
+            honda: true,
+            husaberg: true,
+            husqvarna: true,
+            indian: true,
+            kawasaki: true,
+            keeway: true,
+            ktm: true,
+            kymco: true,
+            lml: true,
+            macbor: true,
+            mash: true,
+            mitt: true,
+            motoGuzzi: true,
+            motorHispania: true,
+            mvAgusta: true,
+            orcal: true,
+            peugeot: true,
+            piaggio: true,
+            quadro: true,
+            rieju: true,
+            royalEnfield: true,
+            suzuki: true,
+            swm: true,
+            sym: true,
+            triumph: true,
+            um: true,
+            vespa: true,
+            voge: true,
+            yamaha: true,
+            zontes: true,
+        },
+    });
+
+    const areAllTrueInCategory = (filtersStatusCopy, category) => {
+        for (var value of Object.values(filtersStatusCopy[category])) {
+            if (!value) return false;
+        }
+
+        return true;
+    };
+
+    const areAllFalseInCategory = (filtersStatusCopy, category) => {
+        for (var value of Object.values(filtersStatusCopy[category])) {
+            if (value) return false;
+        }
+
+        return true;
+    };
+
+    const selectFilter = (category, filter) => {
+        let filtersStatusCopy = JSON.parse(JSON.stringify(filtersStatus));
+
+        if (filtersStatusCopy[category][filter]) {
+            if (areAllTrueInCategory(filtersStatusCopy, category)) {
+                for (let key of Object.keys(filtersStatusCopy[category])) {
+                    filtersStatusCopy[category][key] = key === filter;
+                }
+            } else {
+                filtersStatusCopy[category][filter] = false;
+
+                if (areAllFalseInCategory(filtersStatusCopy, category)) {
+                    for (let key of Object.keys(filtersStatusCopy[category])) {
+                        filtersStatusCopy[category][key] = true;
+                    }
+                }
+            }
+        } else {
+            filtersStatusCopy[category][filter] = true;
+        }
+
+        setFiltersStatus(filtersStatusCopy);
+    };
 
     const addToMyList = (id, data) => {
         localStorage.setItem("mundimoto_myList", JSON.stringify([...myList, id]));
@@ -35,9 +146,12 @@ const DataProvider = (props) => {
     const [secondMoto, setSecondMoto] = useState(null);
 
     const loadNextMoto = async (replaceFirst) => {
-        const newMoto = await getNextMoto(tastesPct, myList);
+        const newMoto = await getNextMoto(medians, myList, filtersStatus, totalValuated.current);
         if (replaceFirst) setFirstMoto(newMoto);
         else setSecondMoto(newMoto);
+
+        totalValuated.current++;
+        localStorage.setItem("mundimoto_totalValuated", JSON.stringify(totalValuated.current));
     };
 
     const firstPassDone = useRef(false);
@@ -46,9 +160,24 @@ const DataProvider = (props) => {
         firstPassDone.current = true;
 
         const getData = async () => {
+            // Load limits and medians
+            limits.current = await getLimits();
+
+            let newMedians = null;
+            if (!medians) {
+                newMedians = {
+                    year: limits.current.year.median,
+                    cc: limits.current.cc.median,
+                    km: limits.current.km.median,
+                    price: limits.current.price.median,
+                };
+
+                setMedians(newMedians);
+            } else newMedians = { ...medians };
+
             // Load next 2 motos
-            const newMotoOne = await getNextMoto(tastesPct, myList);
-            const newMotoTwo = await getNextMoto(tastesPct, myList);
+            const newMotoOne = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current);
+            const newMotoTwo = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current);
             setFirstMoto(newMotoOne);
             setSecondMoto(newMotoTwo);
 
@@ -61,7 +190,25 @@ const DataProvider = (props) => {
         };
 
         getData();
-    }, [getMotosListData, getNextMoto, myList, tastesPct]);
+    }, [getMotosListData, getNextMoto, myList, getLimits, medians, filtersStatus]);
+
+    const likeMoto = (data) => {
+        const newMedians = {};
+        Object.keys(medians).forEach((median) => {
+            const likedValue = data[median];
+            newMedians[median] = medians[median] + (likedValue - medians[median]) / 5;
+        });
+        setMedians(newMedians);
+    };
+
+    const passMoto = (data, decisionTime) => {
+        const newMedians = {};
+        Object.keys(medians).forEach((median) => {
+            const likedValue = data[median];
+            newMedians[median] = medians[median] + (likedValue - medians[median]) / (decisionTime < 2 ? 2 : 5);
+        });
+        setMedians(newMedians);
+    };
 
     return (
         <Data.Provider
@@ -77,6 +224,12 @@ const DataProvider = (props) => {
                 secondMoto,
                 setSecondMoto,
                 loadNextMoto,
+                likeMoto,
+                passMoto,
+                limits,
+                medians,
+                selectFilter,
+                filtersStatus,
             }}
         >
             {props.children}
