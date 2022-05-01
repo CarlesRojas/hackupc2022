@@ -150,13 +150,15 @@ const DataProvider = (props) => {
 
     const loadNextMoto = async (replaceFirst) => {
         const newMoto = await getNextMoto(medians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
-        viewedMotos.current.push(newMoto.id)
+        viewedMotos.current.push(newMoto.id);
         if (replaceFirst) setFirstMoto(newMoto);
         else setSecondMoto(newMoto);
 
         totalValuated.current++;
         localStorage.setItem("mundimoto_totalValuated", JSON.stringify(totalValuated.current));
     };
+
+    const [loaded, setLoaded] = useState(false);
 
     const firstPassDone = useRef(false);
     useEffect(() => {
@@ -180,10 +182,22 @@ const DataProvider = (props) => {
             } else newMedians = { ...medians };
 
             // Load next 2 motos
-            const newMotoOne = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
-            viewedMotos.current.push(newMotoOne.id)
-            const newMotoTwo = await getNextMoto(newMedians, myList, filtersStatus, totalValuated.current, viewedMotos.current);
-            viewedMotos.current.push(newMotoTwo.id)
+            const newMotoOne = await getNextMoto(
+                newMedians,
+                myList,
+                filtersStatus,
+                totalValuated.current,
+                viewedMotos.current
+            );
+            viewedMotos.current.push(newMotoOne.id);
+            const newMotoTwo = await getNextMoto(
+                newMedians,
+                myList,
+                filtersStatus,
+                totalValuated.current,
+                viewedMotos.current
+            );
+            viewedMotos.current.push(newMotoTwo.id);
             setFirstMoto(newMotoOne);
             setSecondMoto(newMotoTwo);
 
@@ -193,6 +207,8 @@ const DataProvider = (props) => {
 
             const mySavedData = await getMotosListData(mySavedList);
             setListData(mySavedData);
+
+            setLoaded(true);
         };
 
         getData();
@@ -236,6 +252,7 @@ const DataProvider = (props) => {
                 medians,
                 selectFilter,
                 filtersStatus,
+                loaded,
             }}
         >
             {props.children}

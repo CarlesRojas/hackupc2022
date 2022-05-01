@@ -3,4 +3,15 @@
 @import "./animations";
 
 .isDesktop {
+    .Filter {
+        .grid {
+            height: fit-content;
+        }
+    }
+
+    .DesktopLayout {
+        .grid {
+            grid-gap: 0.5rem;
+        }
+    }
 }

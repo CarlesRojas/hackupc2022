@@ -15,9 +15,14 @@ export default function Filter() {
     const filtersOrder = ["type", "licence", "brand"];
     const filtersTranslations = [TYPES_TRANSLATION, LICENCES_TRANSLATION, BRANDS_TRANSLATION];
 
+    console.log(mediansOrder);
+
     return (
         <div className="Filter">
             {mediansOrder.map((category, i) => {
+                console.log(medians[category]);
+                console.log(limits.current);
+
                 const pointPos =
                     (medians[category] - limits.current[category].min) /
                     (limits.current[category].max - limits.current[category].min);
