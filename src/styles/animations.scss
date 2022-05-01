@@ -43,6 +43,63 @@
     }
 }
 
+.drive {
+    animation: drive 3s ease-in-out;
+    animation-fill-mode: forwards;
+
+    &.infinite {
+        animation: drive 2s ease-in-out infinite;
+    }
+
+    @keyframes drive {
+        0% {
+            transform: translateY(0px);
+        }
+        5% {
+            transform: translateY(-5px);
+        }
+        10% {
+            transform: translateY(0px);
+        }
+        15% {
+            transform: translateY(-5px);
+        }
+        20% {
+            transform: translateY(0px);
+        }
+        25% {
+            transform: translateY(-5px);
+        }
+        30% {
+            transform: translateY(0px);
+        }
+        35% {
+            transform: translateY(-5px);
+        }
+        40% {
+            transform: translateY(0px);
+        }
+        45% {
+            transform: translateY(-5px);
+        }
+        50% {
+            transform: translateY(0px);
+        }
+        55% {
+            transform: translateY(-5px);
+        }
+        60% {
+            transform: translateY(0px);
+        }
+        75% {
+            transform: rotate(90deg);
+        }
+        100% {
+            transform: rotate(90deg);
+        }
+    }
+}
+
 .rotateQuarters {
     animation: rotateQuarters 3s ease-in-out;
 

@@ -10,7 +10,7 @@ import { Data } from "../contexts/Data";
 // const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
-    const { firstMoto, secondMoto, loadNextMoto, addToMyList, likeMoto, passMoto } = useContext(Data);
+    const { firstMoto, secondMoto, loadNextMoto, addToMyList, likeMoto, passMoto, removeAllFilters } = useContext(Data);
 
     const startTime = useRef(performance.now());
 
@@ -106,6 +106,7 @@ export default function Home() {
                         onLike={() => handleLike(false)}
                         onPass={() => handlePass(false)}
                         cardId={"first"}
+                        removeAllFilters={removeAllFilters}
                     />
                 )}
 
@@ -116,6 +117,7 @@ export default function Home() {
                         onLike={() => handleLike(false)}
                         onPass={() => handlePass(false)}
                         cardId={"second"}
+                        removeAllFilters={removeAllFilters}
                     />
                 )}
             </div>

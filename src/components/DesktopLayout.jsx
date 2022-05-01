@@ -17,7 +17,7 @@ export default function DesktopLayout() {
             {loaded && (
                 <div className="grid">
                     <div className="sectionContainer">
-                        <List />
+                        <Filter />
                     </div>
 
                     <div className="sectionContainer">
@@ -25,7 +25,7 @@ export default function DesktopLayout() {
                     </div>
 
                     <div className="sectionContainer">
-                        <Filter />
+                        <List />
                     </div>
                 </div>
             )}

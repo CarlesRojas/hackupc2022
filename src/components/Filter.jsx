@@ -1,5 +1,4 @@
-import React, { useContext, Fragment } from "react";
-import cn from "classnames";
+import React, { useContext, Fragment, useRef, useEffect, useState } from "react";
 
 import { CATEGORIES_TRANSLATION, TYPES_TRANSLATION, BRANDS_TRANSLATION, LICENCES_TRANSLATION } from "./translates";
 
@@ -15,24 +14,39 @@ export default function Filter() {
     const filtersOrder = ["type", "licence", "brand"];
     const filtersTranslations = [TYPES_TRANSLATION, LICENCES_TRANSLATION, BRANDS_TRANSLATION];
 
-    console.log(mediansOrder);
+    const point = useRef();
+    const bar = useRef();
+
+    const [boxes, setBoxes] = useState({ bar: { left: 0 }, point: { left: 0 } });
+
+    useEffect(() => {
+        setBoxes({ bar: bar.current.getBoundingClientRect(), point: point.current.getBoundingClientRect() });
+    }, []);
 
     return (
         <div className="Filter">
             {mediansOrder.map((category, i) => {
-                console.log(medians[category]);
-                console.log(limits.current);
-
                 const pointPos =
                     (medians[category] - limits.current[category].min) /
                     (limits.current[category].max - limits.current[category].min);
+
+                console.log("");
+                console.log(boxes.point.left);
+                console.log(boxes.bar.left);
+                const withPct = 40 / (boxes.bar.right - boxes.bar.left);
 
                 return (
                     <Fragment key={category}>
                         <p className="title">{CATEGORIES_TRANSLATION[category]}</p>
                         <div className="container">
-                            <div className="bar">
-                                <div className="pointContainer" style={{ left: `${pointPos * 100}%` }}>
+                            <div className="bar" ref={bar}>
+                                <div
+                                    className="pointContainer"
+                                    ref={point}
+                                    style={{
+                                        left: `${Math.max(withPct, Math.min(pointPos, 1 - withPct)) * 100}%`,
+                                    }}
+                                >
                                     <p className="pointNum">
                                         {parseInt(medians[category]).toLocaleString("es-ES") + medianSign[i]}
                                     </p>

@@ -5,6 +5,8 @@ import { useDrag } from "@use-gesture/react";
 
 import { BRAND_LOGOS, LICENCES, TYPES } from "./images";
 
+import logo from "../resources/icons/scoot.svg";
+
 const API_URL =
     !process.env.NODE_ENV || process.env.NODE_ENV === "development"
         ? "http://ec2-15-237-75-238.eu-west-3.compute.amazonaws.com:8000"
@@ -12,7 +14,7 @@ const API_URL =
 
 const IMG_URL = `${API_URL}/fileManager/image`;
 
-export default function Card({ data, shown, onLike, onPass, cardId }) {
+export default function Card({ data, shown, onLike, onPass, cardId, removeAllFilters }) {
     const { id, name, old_price, price, licence, cc, type, brand, year, km /*, url*/ } = data;
 
     const [{ x, scale, opacity }, api] = useSpring(() => ({
@@ -123,6 +125,17 @@ export default function Card({ data, shown, onLike, onPass, cardId }) {
 
         if (shown.shown) center();
     }, [center, shown]);
+
+    if (!id)
+        return (
+            <div className="errorContainer">
+                <SVG src={logo} className="errorLogo drive" />
+                <p className="error">There are no motorbikes that meet your filter criteria.</p>
+                <div className="removeFiltersButton" onClick={removeAllFilters}>
+                    Remove Filters
+                </div>
+            </div>
+        );
 
     return (
         <animated.div

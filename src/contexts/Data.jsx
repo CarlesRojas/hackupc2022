@@ -125,6 +125,21 @@ const DataProvider = (props) => {
         setFiltersStatus(filtersStatusCopy);
     };
 
+    const removeAllFilters = () => {
+        let filtersStatusCopy = JSON.parse(JSON.stringify(filtersStatus));
+
+        Object.keys(filtersStatusCopy).map((category) => {
+            Object.keys(filtersStatusCopy[category]).map((filter) => {
+                filtersStatusCopy[category][filter] = true;
+            });
+        });
+
+        setFiltersStatus(filtersStatusCopy);
+
+        loadNextMoto(true);
+        loadNextMoto(false);
+    };
+
     const addToMyList = (id, data) => {
         localStorage.setItem("mundimoto_myList", JSON.stringify([...myList, id]));
 
@@ -133,7 +148,6 @@ const DataProvider = (props) => {
     };
 
     const removeIdFromList = (id) => {
-        
         const newMyList = myList.filter((savedId) => savedId != id);
         localStorage.setItem("mundimoto_myList", JSON.stringify([...newMyList]));
         setMyList(newMyList);
@@ -224,7 +238,7 @@ const DataProvider = (props) => {
         const newMedians = {};
         Object.keys(medians).forEach((median) => {
             const likedValue = data[median];
-            newMedians[median] = medians[median] + (likedValue - medians[median]) / (decisionTime < 2 ? 2 : 5);
+            newMedians[median] = medians[median] - (likedValue - medians[median]) / (decisionTime < 2 ? 2 : 5);
         });
         setMedians(newMedians);
     };
@@ -250,6 +264,7 @@ const DataProvider = (props) => {
                 selectFilter,
                 filtersStatus,
                 loaded,
+                removeAllFilters,
             }}
         >
             {props.children}

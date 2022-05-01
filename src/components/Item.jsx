@@ -58,7 +58,7 @@ export default function Item({ data, selected, selectThis, removeThisFromList, c
                 </div>
 
                 <div className="buy" onClick={() => window.open(url, "_blank")}>
-                    Comprar
+                    View on Web
                 </div>
             </div>
         </div>
