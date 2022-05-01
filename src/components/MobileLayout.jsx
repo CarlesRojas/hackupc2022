@@ -7,7 +7,7 @@ import Filter from "./Filter";
 import Navbar from "./Navbar";
 import Logobar from "./Logobar";
 
-const STAGES = ["list", "home", "filter"];
+const STAGES = ["filter", "home", "list"];
 
 export default function MobileLayout() {
     const currentPage = useRef(1);

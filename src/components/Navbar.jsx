@@ -9,16 +9,16 @@ import FiltersIcon from "../resources/icons/filter.svg";
 
 const PAGES = [
     {
-        name: "Your List",
-        icon: ListIcon,
+        name: "Filters",
+        icon: FiltersIcon,
     },
     {
         name: "MundiMoto",
         icon: HomeIcon,
     },
     {
-        name: "Filters",
-        icon: FiltersIcon,
+        name: "Your List",
+        icon: ListIcon,
     },
 ];
 
