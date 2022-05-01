@@ -133,15 +133,12 @@ const DataProvider = (props) => {
     };
 
     const removeIdFromList = (id) => {
-        const index = myList.findIndex((element) => element === id);
-
-        const newMyList = [...myList];
-        newMyList.splice(index, 1);
+        
+        const newMyList = myList.filter((savedId) => savedId != id);
         localStorage.setItem("mundimoto_myList", JSON.stringify([...newMyList]));
         setMyList(newMyList);
 
-        const newListData = [...listData];
-        newListData.splice(index, 1);
+        const newListData = listData.filter((data) => data.id != id);
         setListData(newListData);
     };
 
