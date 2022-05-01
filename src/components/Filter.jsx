@@ -10,7 +10,7 @@ export default function Filter() {
     const { limits, medians, selectFilter, filtersStatus } = useContext(Data);
 
     const mediansOrder = ["price", "cc", "km", "year"];
-    const medianSign = ["€", "c.c.", "km", ""];
+    const medianSign = [" €", " c.c.", " km", ""];
 
     const filtersOrder = ["type", "licence", "brand"];
     const filtersTranslations = [TYPES_TRANSLATION, LICENCES_TRANSLATION, BRANDS_TRANSLATION];

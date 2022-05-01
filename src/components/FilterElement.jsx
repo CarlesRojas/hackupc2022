@@ -11,7 +11,14 @@ const FilterElement = ({ category, filter, selectFilter, isActive }) => {
         category === "brand" ? (
             <img className="image" src={BRAND_LOGOS[filter]} alt="" />
         ) : (
-            <SVG className="svg" src={category === "licence" ? LICENCES[filter] : TYPES[filter]} />
+            <SVG
+                className={cn("svg", {
+                    brand: category === "brand",
+                    licence: category === "licence",
+                    type: category === "type",
+                })}
+                src={category === "licence" ? LICENCES[filter] : TYPES[filter]}
+            />
         );
 
     const topContainer = ["brand", "type", "licence"].includes(category) ? (

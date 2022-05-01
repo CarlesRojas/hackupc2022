@@ -51,7 +51,7 @@ export default function Navbar({ setPage, currentPage }) {
                         key={name}
                     >
                         <SVG className="icon" src={icon} />
-                        <p className="name">{name}</p>
+                        {/* <p className="name">{name}</p> */}
                     </div>
                 ))}
             </div>

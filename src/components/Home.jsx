@@ -123,12 +123,12 @@ export default function Home() {
             <div className="buttonsContainer">
                 <div className="no" onClick={() => handlePass(true)}>
                     <SVG className="icon" src={NoIcon} />
-                    <p className="name">Pass</p>
+                    {/* <p className="name">Pass</p> */}
                 </div>
 
                 <div className="yes" onClick={() => handleLike(true)}>
                     <SVG className="icon" src={YesIcon} />
-                    <p className="name">Like</p>
+                    {/* <p className="name">Like</p> */}
                 </div>
             </div>
         </div>
