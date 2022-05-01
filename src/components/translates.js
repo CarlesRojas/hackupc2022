@@ -1,11 +1,11 @@
 const CATEGORIES_TRANSLATION = {
-    type: "Tipo",
-    licence: "Carnet",
-    price: "Precio",
-    cc: "Cilindrada",
-    year: "Año",
-    km: "Kilometraje",
-    brand: "Marca",
+    type: "Type",
+    licence: "Licence",
+    price: "Price",
+    cc: "C.C.",
+    year: "Year",
+    km: "Mileage",
+    brand: "Brand",
 };
 
 const TYPES_TRANSLATION = {
@@ -18,7 +18,7 @@ const TYPES_TRANSLATION = {
     sport: "Sport",
     touring: "Touring",
     trail: "Trail",
-    tresRuedas: "Tres Ruedas",
+    tresRuedas: "Three Wheels",
 };
 
 const BRANDS_TRANSLATION = {
