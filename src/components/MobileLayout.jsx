@@ -1,6 +1,5 @@
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import usePageAnimation from "../hooks/usePageAnimation";
-import { Data } from "../contexts/Data";
 
 import List from "./List.jsx";
 import Home from "./Home";
@@ -11,7 +10,6 @@ import Logobar from "./Logobar";
 const STAGES = ["filter", "home", "list"];
 
 export default function MobileLayout() {
-    const { loaded } = useContext(Data);
     const currentPage = useRef(1);
 
     const animationSpeed = 300;
@@ -34,12 +32,8 @@ export default function MobileLayout() {
         <div className="MobileLayout">
             <Logobar />
 
-            {loaded && (
-                <>
-                    <div className="mainPagesContent">{renderedPages}</div>
-                    <Navbar setPage={setPage} currentPage={currentPage} />
-                </>
-            )}
+            <div className="mainPagesContent">{renderedPages}</div>
+            <Navbar setPage={setPage} currentPage={currentPage} />
         </div>
     );
 }
