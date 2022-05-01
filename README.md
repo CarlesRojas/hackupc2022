@@ -1,4 +1,4 @@
-# HackUPC 2022
+# HackUPC 2022 - scoot
 
 App for the HackUPC 2022.
 
